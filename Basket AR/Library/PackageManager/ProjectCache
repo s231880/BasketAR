@@ -5,15 +5,15 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637477954233783615
-    m_Hash: 2409109389
+      ticks: 637477984463461191
+    m_Hash: 1752610759
   m_LockFileStatus:
     m_FilePath: D:/PersonalUnityProjects/BasketAR/Basket AR/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637477954245856844
+      ticks: 637477990947252574
     m_Hash: 1799871664
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
