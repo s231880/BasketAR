@@ -55,6 +55,9 @@ namespace BBAR
 
         private void OnTouchBegan(Vector3 touchPosition)
         {
+            //Do a raycast to check if the user tapped the ball
+            //-----------------------------------------------------------------------
+
             if (!m_ThereIsABall)
                 GameManager.Instance.ActivateBall();
             else
@@ -63,8 +66,17 @@ namespace BBAR
             m_ThereIsABall = !m_ThereIsABall;
         }
 
-        private void OnTouchMoved(Vector3 touchPosition) { }
 
-        private void OnTouchEnded(Vector3 touchPosition) { }
+        private void OnTouchMoved(Vector3 touchPosition)
+        {
+            //TIP: to calculate the amount of dragging (and then the power which the ball is thrown) 
+            //you have to keep in mind that different devices have different screen size, for this reason every calculation
+            //has to be done in relation to the screen width and height
+        }
+
+        private void OnTouchEnded(Vector3 touchPosition)
+        {
+           //Throw the ball
+        }
     }
 }

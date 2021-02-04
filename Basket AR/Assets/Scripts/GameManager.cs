@@ -16,10 +16,10 @@ namespace BBAR
         public static GameManager Instance;
         private UIManager m_UIManager;
         private InputManager m_InputManager;
-        private ObjectPool m_Pool;
+        private ObjectPool m_Pool = new ObjectPool();
         //-----------------------------------------------------------------------
 
-        private GameObject m_ActiveBall; // temporary
+        [SerializeField]private GameObject m_ActiveBall;
 
         private GameState m_State
         {
@@ -29,6 +29,7 @@ namespace BBAR
         void Awake()
         {
             Instance = this;
+            
             //Managers Initialisation
             m_UIManager = this.gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
@@ -36,12 +37,12 @@ namespace BBAR
             m_InputManager = this.gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
 
-            //Obj Pool creation
-            GameObject ball = GameObject.CreatePrimitive(PrimitiveType.Sphere);
+            //Obj Pool 
+            GameObject ball = Resources.Load<GameObject>("Ball");
             GameObject ballsPool = new GameObject("BallsPool");
-            GameObject activeBalls = new GameObject("ActiveBalls");
+            ballsPool.transform.SetParent(this.transform);
 
-            m_Pool.CreatePool(ball, ballsPool.transform, activeBalls.transform);
+            m_Pool.CreatePool(ball, ballsPool.transform);
             m_State = GameState.Started;
         }
 

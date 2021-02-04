@@ -6,32 +6,35 @@ namespace BBAR
 {
     public class ObjectPool : MonoBehaviour
     {
-        //private List<GameObject> m_Pool = new List<GameObject>();
-        private const int COUNT = 10; //temporary number  
-        private Transform m_ActiveObjParent;
-        private Transform m_PoolParent;
+        private const int COUNT = 10;                                       //Random number 
+        private Transform m_ActiveObjTransform;
+        private Transform m_PoolTransform;
 
-        public void CreatePool(GameObject cachedObj, Transform poolParent, Transform activeParent)
+        public void CreatePool(GameObject cachedObj, Transform  parent)
         {
-            m_ActiveObjParent = activeParent;
-            m_PoolParent = poolParent;
+            GameObject pool = new GameObject("Pool");
+            GameObject activePool = new GameObject("ActivePool");
+            pool.transform.SetParent(parent);
+            activePool.transform.SetParent(parent);
+            m_ActiveObjTransform = activePool.transform;
+            m_PoolTransform = pool.transform;
 
             for (int i = 0; i < COUNT; ++i)
             {
                 var obj = Object.Instantiate(cachedObj);
                 obj.name = cachedObj.name + i;
                 obj.transform.localScale = new Vector3(1, 1, 1);
-                obj.transform.SetParent(m_PoolParent);
+                obj.transform.SetParent(m_PoolTransform);
                 obj.SetActive(false);
             }
         }
         
         public GameObject GetObject()
         {
-            if (m_PoolParent.childCount != 0)
+            if (m_PoolTransform.childCount != 0)
             {
-                GameObject obj = m_PoolParent.GetChild(0).gameObject;
-                obj.transform.SetParent(m_ActiveObjParent);
+                GameObject obj = m_PoolTransform.GetChild(0).gameObject;
+                obj.transform.SetParent(m_ActiveObjTransform);
                 obj.SetActive(true);
                 return obj;
             }
@@ -41,11 +44,8 @@ namespace BBAR
 
         public void ReturnObject(GameObject obj)
         {
-            obj.transform.SetParent(m_PoolParent);
+            obj.transform.SetParent(m_PoolTransform);
             obj.SetActive(false);
         }
-
-
-
     }
 }
