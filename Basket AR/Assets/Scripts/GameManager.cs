@@ -3,10 +3,13 @@ using System.Collections.Generic;
 using UnityEngine;
 
 namespace BBAR
-{
+{    
+     ///<summary>
+     /// The GameState enum will keep track of the state of the game, and will inform the manager when the state is changed
+     /// </summary>
     public enum GameState
     {
-        Started,
+        Started, // => Prepare to the game, activate 
         Playing,
         Ended
     }
@@ -20,40 +23,59 @@ namespace BBAR
         //-----------------------------------------------------------------------
 
         [SerializeField]private GameObject m_ActiveBall;
-
+        
         private GameState m_State
         {
-            set { NotifyManagers(); }
+            get { return m_State; }
+            set
+            {
+                m_State = value;
+                NotifyManagers();
+            }
         }
 
         void Awake()
         {
+            //-----------------------------------------------------------------------
+            //Variables & Managers Initialisation
             Instance = this;
-            
-            //Managers Initialisation
+
             m_UIManager = this.gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
 
             m_InputManager = this.gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
-
-            //Obj Pool 
-            GameObject ball = Resources.Load<GameObject>("Ball");
-            GameObject ballsPool = new GameObject("BallsPool");
-            ballsPool.transform.SetParent(this.transform);
-
-            m_Pool.CreatePool(ball, ballsPool.transform);
-            m_State = GameState.Started;
+            //-----------------------------------------------------------------------
+            //Obj Pool creation 
+            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
+            GameObject ballsPool = new GameObject("BallsPool");    // Pool transform creation
+            ballsPool.transform.SetParent(this.transform);         // Setting this gameobject as parent of the pool
+            m_Pool.CreatePool(ball, ballsPool.transform);          // Create the pool
+            m_State = GameState.Started;                           // Start the game
         }
 
-        // Update is called once per frame
         void Update()
         {
         
         }
 
-        private void NotifyManagers() { }
+        //-----------------------------------------------------------------------
+        //Change game state
+        private void NotifyManagers()
+        {
+            switch (m_State)
+            {
+                case GameState.Started: // The UI menu should is showned
+                    break;
+                case GameState.Playing: // Actual game starts and the user is playing
+                    break;
+                case GameState.Ended:   // The game is ended, the user has to decide between play again and go fuck himself
+                    break;
 
+            }
+        }
+        //-----------------------------------------------------------------------
+        //Getting and returning ball to the pool
         public void ActivateBall()
         {
             m_ActiveBall = m_Pool.GetObject();
@@ -65,6 +87,7 @@ namespace BBAR
             m_Pool.ReturnObject(m_ActiveBall);
             m_ActiveBall = null;
         }
+        //-----------------------------------------------------------------------
     }
 }
 

@@ -6,15 +6,21 @@ namespace BBAR
 {
     public class UIManager : MonoBehaviour
     {
+       private int m_Score = 0;
        public void Initialise()
+       {
+
+       }
+
+        public void ShowStartScreen(bool state) { }
+
+        public void ShowGUI(bool state) { }
+
+        public void ShowEndScreen(bool state) { }
+
+        public void SetScore(int score)
         {
-
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            m_Score = score;
         }
     }
 }
