@@ -8,7 +8,7 @@ namespace BBAR
     public class InputManager : MonoBehaviour
     {
 
-        private bool m_ThereIsABall = false;
+        private bool m_ThereIsABall = false;    //For testing purpose only
 
         public void Initialise()
         {
@@ -18,7 +18,11 @@ namespace BBAR
         {
             UpdatePlacementPose();
         }
-
+        /// <summary>
+        /// The first part (!UNITY_EDITOR) is the one which is gonna do the actual work once the build 
+        /// is put on the phone, while the second one is only for you to make our life easier in development phase
+        /// because allow us to test the app on the editor without doing a build each time
+        /// </summary>
         private void UpdatePlacementPose()
         {
 
@@ -35,7 +39,6 @@ namespace BBAR
 
                 else if (touch_.phase == TouchPhase.Ended)
                     OnTouchEnded(touch_.position);
-
             }
 #else
             if (true == Input.GetMouseButtonDown(0))
@@ -55,9 +58,9 @@ namespace BBAR
 
         private void OnTouchBegan(Vector3 touchPosition)
         {
-            //Do a raycast to check if the user tapped the ball
+            //TIP: Do a raycast to check if the user tapped the ball
             //-----------------------------------------------------------------------
-
+            //This code below is only for testing purposes
             if (!m_ThereIsABall)
                 GameManager.Instance.ActivateBall();
             else
