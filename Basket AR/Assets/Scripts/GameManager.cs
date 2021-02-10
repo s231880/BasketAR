@@ -1,7 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using UnityEngine.XR.ARFoundation;
 
 namespace BBAR
 {    
@@ -10,7 +9,7 @@ namespace BBAR
      /// </summary>
     public enum GameState
     {
-        Started,   
+        Started, // => Prepare to the game, activate 
         Playing,
         Ended
     }
@@ -20,18 +19,12 @@ namespace BBAR
         public static GameManager Instance;
         private UIManager m_UIManager;
         private InputManager m_InputManager;
-        private ObjectPool m_Pool;
+        private ObjectPool m_Pool = new ObjectPool();
         //-----------------------------------------------------------------------
 
-        private ARPlaneManager m_PlaneManager;
-        private ARRaycastManager m_RayCastManager;
-        //-----------------------------------------------------------------------
-
-        private GameObject m_ActiveBall;
-        [SerializeField]private GameObject m_Basket;
-
-        private GameState m_State;
-        public GameState State
+        [SerializeField]private GameObject m_ActiveBall;
+        
+        private GameState m_State
         {
             get { return m_State; }
             set
@@ -52,26 +45,18 @@ namespace BBAR
 
             m_InputManager = this.gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
-
-            m_PlaneManager = this.transform.Find("AR Session Origin").GetComponent<ARPlaneManager>();
-
-            //-----------------------------------------------------------------------
-            //Loading the prefab 
-            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
-            m_Basket = Resources.Load<GameObject>("Basket");       // Loading the basket
-
             //-----------------------------------------------------------------------
             //Obj Pool creation 
+            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             GameObject ballsPool = new GameObject("BallsPool");    // Pool transform creation
             ballsPool.transform.SetParent(this.transform);         // Setting this gameobject as parent of the pool
-            m_Pool = ballsPool.AddComponent<ObjectPool>();
             m_Pool.CreatePool(ball, ballsPool.transform);          // Create the pool
-            State = GameState.Started;                             // Start the game
+            m_State = GameState.Started;                           // Start the game
         }
 
         void Update()
         {
-            PlaceBasket();
+        
         }
 
         //-----------------------------------------------------------------------
@@ -80,7 +65,7 @@ namespace BBAR
         {
             switch (m_State)
             {
-                case GameState.Started: // The UI menu is showned
+                case GameState.Started: // The UI menu should is showned
                     break;
                 case GameState.Playing: // Actual game starts and the user is playing
                     break;
@@ -103,18 +88,6 @@ namespace BBAR
             m_ActiveBall = null;
         }
         //-----------------------------------------------------------------------
-
-        private void PlaceBasket()
-        {
-            if(m_PlaneManager.trackables.count != 0)
-            {
-                var screenCenter = new Vector2(Screen.width / 2, Screen.height / 2);    //Find the screen center
-                var hitsRaycastManager = new List<ARRaycastHit>();
-                m_RayCastManager.Raycast(screenCenter, hitsRaycastManager);
-                var placementPose = hitsRaycastManager[0].pose;                         //Get best raycast position
-                var basket = Instantiate(m_Basket, placementPose.position, placementPose.rotation);
-            }
-        }
     }
 }
 
