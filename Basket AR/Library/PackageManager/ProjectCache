@@ -5,16 +5,16 @@ m_ProjectFiles:
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637477984463461191
-    m_Hash: 1752610759
+      ticks: 637485735919485185
+    m_Hash: 3124431755
   m_LockFileStatus:
     m_FilePath: D:/PersonalUnityProjects/BasketAR/Basket AR/Packages/packages-lock.json
     m_PathExists: 1
     m_ContentTrackingEnabled: 1
     m_ModificationDate:
       serializedVersion: 2
-      ticks: 637478847684631901
-    m_Hash: 1799871664
+      ticks: 637485735930069119
+    m_Hash: 4033540271
 m_EmbeddedPackageManifests:
   m_ManifestsStatus: {}
 m_PackageAssets:
@@ -158,6 +158,7 @@ m_PackageAssets:
         - 3.0.1
         - 3.0.2
         - 3.0.3
+        - 3.0.4
         compatible:
         - 1.0.2
         - 1.0.6
@@ -180,6 +181,7 @@ m_PackageAssets:
         - 3.0.1
         - 3.0.2
         - 3.0.3
+        - 3.0.4
         verified: 2.0.7
       dependencies:
       - name: com.unity.test-framework
@@ -546,153 +548,6 @@ m_PackageAssets:
         type: git
         url: git+https://github.com/Unity-Technologies/com.unity.test-framework.git
         revision: 83583c7273ee961612200215e8989039bbce8748
-        path: 
-    - packageId: com.unity.textmeshpro@3.0.1
-      testable: 0
-      isDirectDependency: 1
-      version: 3.0.1
-      source: 1
-      resolvedPath: D:\PersonalUnityProjects\BasketAR\Basket AR\Library\PackageCache\com.unity.textmeshpro@3.0.1
-      assetPath: Packages/com.unity.textmeshpro
-      name: com.unity.textmeshpro
-      displayName: TextMeshPro
-      author:
-        name: 
-        email: 
-        url: 
-      category: Text Rendering
-      type: 
-      description: 'TextMeshPro is the ultimate text solution for Unity. It''s the
-        perfect replacement for Unity''s UI Text and the legacy Text Mesh.
-
-
-        Powerful
-        and easy to use, TextMeshPro (also known as TMP) uses Advanced Text Rendering
-        techniques along with a set of custom shaders; delivering substantial visual
-        quality improvements while giving users incredible flexibility when it comes
-        to text styling and texturing.
-
-
-        TextMeshPro provides Improved Control
-        over text formatting and layout with features like character, word, line
-        and paragraph spacing, kerning, justified text, Links, over 30 Rich Text
-        Tags available, support for Multi Font & Sprites, Custom Styles and more.
-
-
-        Great
-        performance. Since the geometry created by TextMeshPro uses two triangles
-        per character just like Unity''s text components, this improved visual quality
-        and flexibility comes at no additional performance cost.'
-      status: 4
-      errors: []
-      versions:
-        all:
-        - 0.1.2
-        - 1.0.21
-        - 1.0.23
-        - 1.0.25
-        - 1.0.26
-        - 1.1.0
-        - 1.2.0
-        - 1.2.1
-        - 1.2.2
-        - 1.2.3
-        - 1.2.4
-        - 1.3.0-preview
-        - 1.3.0
-        - 1.4.0-preview.1b
-        - 1.4.0-preview.2a
-        - 1.4.0-preview.3a
-        - 1.4.0
-        - 1.4.1-preview.1
-        - 1.4.1
-        - 1.5.0-preview.1
-        - 1.5.0-preview.2
-        - 1.5.0-preview.3
-        - 1.5.0-preview.4
-        - 1.5.0-preview.5
-        - 1.5.0-preview.6
-        - 1.5.0-preview.7
-        - 1.5.0-preview.8
-        - 1.5.0-preview.10
-        - 1.5.0-preview.11
-        - 1.5.0-preview.12
-        - 1.5.0-preview.13
-        - 1.5.0-preview.14
-        - 1.5.0
-        - 1.5.1
-        - 1.5.3
-        - 2.0.0
-        - 2.0.1-preview.1
-        - 2.0.1
-        - 2.1.0-preview.1
-        - 2.1.0-preview.2
-        - 2.1.0-preview.3
-        - 2.1.0-preview.4
-        - 2.1.0-preview.5
-        - 2.1.0-preview.7
-        - 2.1.0-preview.8
-        - 2.1.0-preview.10
-        - 2.1.0-preview.11
-        - 2.1.0-preview.12
-        - 2.1.0-preview.13
-        - 2.1.0-preview.14
-        - 2.1.0
-        - 2.1.1
-        - 2.1.3
-        - 3.0.0-preview.1
-        - 3.0.0-preview.3
-        - 3.0.0-preview.4
-        - 3.0.0-preview.5
-        - 3.0.0-preview.7
-        - 3.0.0-preview.8
-        - 3.0.0-preview.10
-        - 3.0.0-preview.11
-        - 3.0.0-preview.12
-        - 3.0.0-preview.13
-        - 3.0.0-preview.14
-        - 3.0.0
-        - 3.0.1
-        - 3.0.3
-        compatible:
-        - 3.0.1
-        - 3.0.3
-        verified: 3.0.3
-      dependencies:
-      - name: com.unity.ugui
-        version: 1.0.0
-      resolvedDependencies:
-      - name: com.unity.ugui
-        version: 1.0.0
-      - name: com.unity.modules.ui
-        version: 1.0.0
-      - name: com.unity.modules.imgui
-        version: 1.0.0
-      keywords:
-      - TextMeshPro
-      - TextMesh Pro
-      - TMP
-      - Text
-      - SDF
-      registry:
-        id: main
-        name: 
-        url: https://packages.unity.com
-        scopes: []
-        isDefault: 1
-        capabilities: 7
-      hasRegistry: 1
-      hideInEditor: 1
-      entitlements:
-        isAllowed: 1
-      isAssetStorePackage: 0
-      datePublishedTicks: 637314376320000000
-      documentationUrl: 
-      hasRepository: 1
-      repository:
-        type: git
-        url: https://github.cds.internal.unity3d.com/unity/com.unity.textmeshpro.git
-        revision: 1604b62e543216408311bcd1355a7a9ca1e65765
         path: 
     - packageId: com.unity.timeline@1.4.4
       testable: 0
@@ -1511,6 +1366,113 @@ m_PackageAssets:
         type: git
         url: https://github.cds.internal.unity3d.com/unity/arfoundation.git
         revision: e3fbe1a4a504ff703ae82289a7715f2434d9ae82
+        path: 
+    - packageId: com.unity.xr.oculus@1.6.1
+      testable: 0
+      isDirectDependency: 1
+      version: 1.6.1
+      source: 1
+      resolvedPath: D:\PersonalUnityProjects\BasketAR\Basket AR\Library\PackageCache\com.unity.xr.oculus@1.6.1
+      assetPath: Packages/com.unity.xr.oculus
+      name: com.unity.xr.oculus
+      displayName: Oculus XR Plugin
+      author:
+        name: 
+        email: 
+        url: 
+      category: 
+      type: 
+      description: Provides display and input support for Oculus devices.
+      status: 4
+      errors: []
+      versions:
+        all:
+        - 0.0.9-preview
+        - 0.1.2-preview.1
+        - 0.8.4-preview
+        - 1.0.0-preview.4
+        - 1.0.0
+        - 1.0.2
+        - 1.0.3-preview.1
+        - 1.1.0-preview
+        - 1.1.0
+        - 1.1.1
+        - 1.1.2-preview
+        - 1.1.2
+        - 1.1.3-preview
+        - 1.1.3-preview.1
+        - 1.1.4-preview
+        - 1.1.4-preview.1
+        - 1.1.4
+        - 1.1.5-preview
+        - 1.1.5
+        - 1.2.0-preview.1
+        - 1.2.0
+        - 1.3.1
+        - 1.3.3
+        - 1.3.4
+        - 1.4.0-preview.1
+        - 1.4.0-preview.2
+        - 1.4.0
+        - 1.4.3
+        - 1.5.0
+        - 1.6.0-preview.1
+        - 1.6.0-preview.2
+        - 1.6.1
+        - 1.7.0-preview.1
+        - 1.7.0-preview.2
+        - 1.7.0
+        compatible:
+        - 1.6.1
+        - 1.7.0-preview.1
+        - 1.7.0-preview.2
+        - 1.7.0
+        verified: 1.6.1
+      dependencies:
+      - name: com.unity.xr.management
+        version: 3.2.16
+      - name: com.unity.ugui
+        version: 1.0.0
+      resolvedDependencies:
+      - name: com.unity.xr.management
+        version: 3.2.17
+      - name: com.unity.xr.legacyinputhelpers
+        version: 2.1.6
+      - name: com.unity.subsystemregistration
+        version: 1.0.6
+      - name: com.unity.ugui
+        version: 1.0.0
+      - name: com.unity.modules.ui
+        version: 1.0.0
+      - name: com.unity.modules.imgui
+        version: 1.0.0
+      keywords:
+      - oculus
+      - xr
+      - vr
+      - virtual
+      - rift
+      - quest
+      - xreditorsubsystem
+      registry:
+        id: main
+        name: 
+        url: https://packages.unity.com
+        scopes: []
+        isDefault: 1
+        capabilities: 7
+      hasRegistry: 1
+      hideInEditor: 1
+      entitlements:
+        isAllowed: 1
+      isAssetStorePackage: 0
+      datePublishedTicks: 637409066370000000
+      documentationUrl: 
+      hasRepository: 1
+      repository:
+        type: git
+        url: https://github.cds.internal.unity3d.com/unity/xr.sdk.oculus.git
+        revision: 80e924a304329c20fce4068bbec9aa6a028d996f
         path: 
     - packageId: com.unity.modules.ai@1.0.0
       testable: 0
