@@ -12,7 +12,9 @@ namespace BBAR
 
         public void Initialise()
         {
-
+            //if (!m_ThereIsABall)
+            //    GameManager.Instance.ActivateBall();
+            //m_ThereIsABall = !m_ThereIsABall;
         }
         void Update()
         {
@@ -61,11 +63,12 @@ namespace BBAR
             //TIP: Do a raycast to check if the user tapped the ball
             //-----------------------------------------------------------------------
             //This code below is only for testing purposes
+            
             if (!m_ThereIsABall)
                 GameManager.Instance.ActivateBall();
-            else
-                GameManager.Instance.DisableBall();
-
+            //else
+            //    GameManager.Instance.DisableBall();
+            
             m_ThereIsABall = !m_ThereIsABall;
         }
 
