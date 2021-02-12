@@ -22,9 +22,11 @@ namespace BBAR
         private ObjectPool m_Pool = new ObjectPool();
         //-----------------------------------------------------------------------
 
-        [SerializeField]private GameObject m_ActiveBall;
-        
-        private GameState m_State
+        private GameObject m_ActiveBall;
+        private GameObject m_Basket;
+
+        private GameState m_State;
+        public GameState m_state
         {
             get { return m_State; }
             set
@@ -48,15 +50,24 @@ namespace BBAR
             //-----------------------------------------------------------------------
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
-            GameObject ballsPool = new GameObject("BallsPool");    // Pool transform creation
-            ballsPool.transform.SetParent(this.transform);         // Setting this gameobject as parent of the pool
-            m_Pool.CreatePool(ball, ballsPool.transform);          // Create the pool
+            m_Basket = Resources.Load<GameObject>("Basket");       // Loading the basket prefab
+
+            CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
+
+
         }
 
         void Update()
         {
         
+        }
+
+        private void CreateObjPool(GameObject ball)
+        {
+            GameObject ballsPool = new GameObject("BallsPool");    // Pool transform creation
+            ballsPool.transform.SetParent(this.transform);         // Setting this gameobject as parent of the pool
+            m_Pool.CreatePool(ball, ballsPool.transform);          // Initialise the pool
         }
 
         //-----------------------------------------------------------------------
