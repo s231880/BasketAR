@@ -44,6 +44,11 @@ ExportedObj/
 *.mdb
 *.opendb
 *.VC.db
+*.log
+*.SourceAssetDB
+*.ArtifactDB
+*.dll
+*.db
 
 # Unity3D generated meta files
 *.pidb.meta
@@ -59,4 +64,4 @@ sysinfo.txt
 
 # Crashlytics generated file
 crashlytics-build.properties
-
+Basket AR/Temp/UnityLockfile
