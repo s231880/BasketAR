@@ -34,6 +34,8 @@ namespace BBAR
 
         private ARRaycastManager m_ARRaycastManager;
         private Pose m_PlacementPose;
+        private Vector2 m_TouchPosition = default;
+        private static List<ARRaycastHit> m_HitsList;
 
         private GameState m_State;
         public GameState m_state
@@ -130,7 +132,9 @@ namespace BBAR
 
         private bool ThereIsAValidPlane()
         {
-            bool result = false;
+            bool result = (m_ARRaycastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
+            if (result)
+                m_PlacementPose = m_HitsList[0].pose;
             return result;
         }
     }
