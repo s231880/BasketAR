@@ -60,7 +60,7 @@ namespace BBAR
 
         private void OnTouchBegan(Vector3 touchPosition)
         {
-            //TIP: Do a raycast to check if the user tapped the ball
+            //TIP: Do a raycast to check if the user tapped the ball, if yes store the touch position
             //-----------------------------------------------------------------------
             //This code below is only for testing purposes
             
