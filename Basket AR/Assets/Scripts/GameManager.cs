@@ -1,7 +1,7 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-
+using UnityEngine.XR.ARFoundation;
 namespace BBAR
 {    
      ///<summary>
@@ -16,14 +16,24 @@ namespace BBAR
 
     public class GameManager : MonoBehaviour
     {
+        //-----------------------------------------------------------------------
+        //Application variables
         public static GameManager Instance;
         private UIManager m_UIManager;
         private InputManager m_InputManager;
-        private ObjectPool m_Pool = new ObjectPool();
-        //-----------------------------------------------------------------------
+        private BasketManager m_BasketManager;
 
+        private ObjectPool m_Pool = new ObjectPool();
+        private GameManager m_BallPrefab;
         private GameObject m_ActiveBall;
-        private GameObject m_Basket;
+
+        private bool m_isTheBasketPlaced = false;
+
+        //-----------------------------------------------------------------------
+        //AR variables
+
+        private ARRaycastManager m_ARRaycastManager;
+        private Pose m_PlacementPose;
 
         private GameState m_State;
         public GameState m_state
@@ -47,24 +57,38 @@ namespace BBAR
 
             m_InputManager = this.gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
+
+            m_BasketManager = this.gameObject.AddComponent<BasketManager>();
+            m_BasketManager.Initialise();
+
             //-----------------------------------------------------------------------
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
-            m_Basket = Resources.Load<GameObject>("Basket");       // Loading the basket prefab
-
             CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
-
-
-            //I'm writing this line into Tiziano's Branch
-
-            //I'm writing this line into Bradley's branch
-
         }
 
         void Update()
         {
-        
+#if !UNITY_EDITOR
+            if (!m_isTheBasketPlaced)
+            {
+                if (ThereIsAValidPlane())
+                {
+                    m_BasketManager.PlaceBasket(m_PlacementPose.position);
+                    m_isTheBasketPlaced = true;
+                }
+            }
+#else
+            if (!m_isTheBasketPlaced)
+            {
+                Vector3 basketPos = Camera.main.transform.forward * 20;
+                transform.InverseTransformDirection(basketPos);
+                m_BasketManager.PlaceBasket(basketPos);
+                m_isTheBasketPlaced = true;
+            }
+
+#endif
         }
 
         private void CreateObjPool(GameObject ball)
@@ -103,6 +127,12 @@ namespace BBAR
             m_ActiveBall = null;
         }
         //-----------------------------------------------------------------------
+
+        private bool ThereIsAValidPlane()
+        {
+            bool result = false;
+            return result;
+        }
     }
 }
 
