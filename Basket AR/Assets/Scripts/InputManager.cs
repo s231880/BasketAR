@@ -64,12 +64,12 @@ namespace BBAR
             //-----------------------------------------------------------------------
             //This code below is only for testing purposes
             
-            if (!m_ThereIsABall)
-                GameManager.Instance.ActivateBall();
+            //if (!m_ThereIsABall)
+            //    GameManager.Instance.ActivateBall();
             //else
             //    GameManager.Instance.DisableBall();
             
-            m_ThereIsABall = !m_ThereIsABall;
+            //m_ThereIsABall = !m_ThereIsABall;
         }
 
 
