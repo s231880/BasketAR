@@ -67,6 +67,7 @@ namespace BBAR
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             CreateObjPool(ball);                                   // Create the pool
+            ActivateBall();
             m_State = GameState.Started;                           // Start the game
         }
 
