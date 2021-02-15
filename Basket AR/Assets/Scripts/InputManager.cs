@@ -12,12 +12,12 @@ namespace BBAR
 
         public void Initialise()
         {
-            //if (!m_ThereIsABall)
-            //    GameManager.Instance.ActivateBall();
-            //m_ThereIsABall = !m_ThereIsABall;
+            
         }
         void Update()
         {
+           
+
             UpdatePlacementPose();
         }
         /// <summary>
