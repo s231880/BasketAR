@@ -89,7 +89,6 @@ namespace BBAR
                 m_BasketManager.PlaceBasket(basketPos);
                 m_isTheBasketPlaced = true;
             }
-
 #endif
         }
 

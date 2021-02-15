@@ -23,11 +23,6 @@ namespace BBAR
         {
             var basket = GameObject.Instantiate(m_BasketPrefab ,position, m_BasketPrefab.transform.rotation);
             Debug.LogError($"{position} Basket position");
-            basket.transform.LookAt(Camera.main.transform);
-
-            Vector3 basketRot = basket.transform.rotation.eulerAngles;
-            basketRot.x = 90;
-            basket.transform.rotation.eulerAngles.Set(90, basket.transform.rotation.eulerAngles.y, basket.transform.rotation.eulerAngles.z); 
         }
     }
 }
