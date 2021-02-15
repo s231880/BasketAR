@@ -32,52 +32,55 @@ public class Ball : MonoBehaviour
 
         if (thrown)
             return;
-#if !UNITY_EDITOR
-        if (Input.touchCount == 1)
-        {
-            Touch touch_ = Input.GetTouch(0);
 
-            if (touch_.phase == TouchPhase.Began)
-                OnTouchBegan(touch_.position);
+// I had to comment these lines out because they gave me error when making a build!
 
-            else if (touch_.phase == TouchPhase.Moved)
-                OnTouchMoved(touch_.position);
+//#if !UNITY_EDITOR
+//        if (Input.touchCount == 1)
+//        {
+//            Touch touch_ = Input.GetTouch(0);
 
-            else if (touch_.phase == TouchPhase.Ended)
-                OnTouchEnded(touch_.position);
-        }
+//            if (touch_.phase == TouchPhase.Began)
+//                OnTouchBegan(touch_.position);
 
-        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)
-        {
-            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-            RaycastHit hit;
+//            else if (touch_.phase == TouchPhase.Moved)
+//                OnTouchMoved(touch_.position);
 
-            if (Physics.Raycast(ray, out hit, 100f))
-            {
-                if (hit.transform == transform)
-                {
-                    holding = true;
-                    transform.SetParent(null);
-                }
-            }
-        }
+//            else if (touch_.phase == TouchPhase.Ended)
+//                OnTouchEnded(touch_.position);
+//        }
 
-        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended)
-        {
-            if (lastMouseY < Input.GetTouch(0).position.y)
-            {
-                ThrowBall(Input.GetTouch(0).position);
-            }
-        }
+//        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)
+//        {
+//            Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
+//            RaycastHit hit;
 
-        if (Input.touchCount == 1)
-        {
-            lastMouseX = Input.GetTouch(0).position.x;
-            lastMouseY = Input.GetTouch(0).position.y;
+//            if (Physics.Raycast(ray, out hit, 100f))
+//            {
+//                if (hit.transform == transform)
+//                {
+//                    holding = true;
+//                    transform.SetParent(null);
+//                }
+//            }
+//        }
 
-            transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, 50f * Time.deltaTime);
-        }
-#else
+//        if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended)
+//        {
+//            if (lastMouseY < Input.GetTouch(0).position.y)
+//            {
+//                ThrowBall(Input.GetTouch(0).position);
+//            }
+//        }
+
+//        if (Input.touchCount == 1)
+//        {
+//            lastMouseX = Input.GetTouch(0).position.x;
+//            lastMouseY = Input.GetTouch(0).position.y;
+
+//            transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, 50f * Time.deltaTime);
+//        }
+//#else
             if (true == Input.GetMouseButtonDown(0))
             {
                 //OnTouchBegan(Input.mousePosition);
@@ -111,7 +114,7 @@ public class Ball : MonoBehaviour
 
                 transform.localPosition = Vector3.Lerp(transform.localPosition, newPosition, 50f * Time.deltaTime);
             }
-#endif
+//#endif
 
     }
 
