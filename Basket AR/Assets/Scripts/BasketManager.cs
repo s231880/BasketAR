@@ -22,7 +22,7 @@ namespace BBAR
         public void PlaceBasket(Vector3 position)
         {
             var basket = GameObject.Instantiate(m_BasketPrefab ,position, m_BasketPrefab.transform.rotation);
-            Debug.LogError($"{position} Basket position");
+            GameManager.Instance.m_UIManager.SetLabelTest("PlaceBasket");
         }
     }
 }
