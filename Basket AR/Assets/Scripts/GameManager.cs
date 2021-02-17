@@ -25,7 +25,8 @@ namespace BBAR
 
         private ObjectPool m_Pool = new ObjectPool();
         private GameManager m_BallPrefab;
-        private GameObject m_ActiveBall;
+        public GameObject m_ActiveBall;
+        public Ball m_ActiveBallScript;
 
         private bool m_isTheBasketPlaced = false;
 
@@ -122,6 +123,7 @@ namespace BBAR
         {
             m_ActiveBall = m_Pool.GetObject();
             m_ActiveBall.transform.position = Vector3.zero;
+            m_ActiveBallScript = m_ActiveBall.GetComponent<Ball>();
         }
 
         public void DisableBall()
