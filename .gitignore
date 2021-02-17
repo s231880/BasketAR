@@ -1,0 +1,7 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+*.sqlite
+/.vs/BasketAR/v15/Browse.VC.opendb
+/.vs/BasketAR/v15/Browse.VC.db
