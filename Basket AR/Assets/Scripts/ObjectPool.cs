@@ -13,7 +13,7 @@ namespace BBAR
 {
     public class ObjectPool : MonoBehaviour
     {
-        private const int COUNT = 10;                                        
+        private const int COUNT = 10;
         private Transform m_ActiveObjTransform;
         private Transform m_PoolTransform;
 

@@ -19,7 +19,7 @@ namespace BBAR
         //-----------------------------------------------------------------------
         //Application variables
         public static GameManager Instance;
-        private UIManager m_UIManager;
+        public UIManager m_UIManager;
         private InputManager m_InputManager;
         private BasketManager m_BasketManager;
 
@@ -33,7 +33,8 @@ namespace BBAR
         //-----------------------------------------------------------------------
         //AR variables
 
-        private ARRaycastManager m_ARRaycastManager;
+        private ARRaycastManager m_RayCastManager;
+        private ARPlaneManager m_PlaneManager;
         private Pose m_PlacementPose;
         private Vector2 m_TouchPosition = default;
         private static List<ARRaycastHit> m_HitsList;
@@ -64,6 +65,7 @@ namespace BBAR
             m_BasketManager = this.gameObject.AddComponent<BasketManager>();
             m_BasketManager.Initialise();
 
+            ARVariablesInitialisation();
             //-----------------------------------------------------------------------
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
@@ -77,6 +79,7 @@ namespace BBAR
 #if !UNITY_EDITOR
             if (!m_isTheBasketPlaced)
             {
+                m_UIManager.SetLabelTest("!m_isTheBasketPlaced");
                 if (ThereIsAValidPlane())
                 {
                     m_BasketManager.PlaceBasket(m_PlacementPose.position);
@@ -91,8 +94,16 @@ namespace BBAR
                 m_BasketManager.PlaceBasket(basketPos);
                 m_isTheBasketPlaced = true;
             }
-
 #endif
+        }
+
+        private void ARVariablesInitialisation()
+        {
+            var sessionOriginTransform = gameObject.transform.Find("AR Session Origin");
+            m_PlaneManager = sessionOriginTransform.GetComponent<ARPlaneManager>();
+            m_RayCastManager = sessionOriginTransform.GetComponent<ARRaycastManager>();
+
+            m_PlaneManager.planesChanged += PlaneStateChanged;      //Adding event when plan is detected
         }
 
         private void CreateObjPool(GameObject ball)
@@ -118,7 +129,7 @@ namespace BBAR
             }
         }
         //-----------------------------------------------------------------------
-        //Getting and returning ball to the pool
+        //Getting and returning ball to the pool => Probably these functions should be moved into Ball.cs, what do you think Brad?
         public void ActivateBall()
         {
             m_ActiveBall = m_Pool.GetObject();
@@ -132,13 +143,28 @@ namespace BBAR
             m_ActiveBall = null;
         }
         //-----------------------------------------------------------------------
-
+        //Checking if there are valid planes
         private bool ThereIsAValidPlane()
         {
-            bool result = (m_ARRaycastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
+            bool result = (m_RayCastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
             if (result)
+            {
                 m_PlacementPose = m_HitsList[0].pose;
+
+            }
             return result;
+        }
+
+        //Function that detects when plane state change => the state can be: Added, Updated, Removed
+        private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
+        {
+            if(arg.added != null && !m_isTheBasketPlaced)                       // A plane has been added
+            {
+                ARPlane plane = arg.added[0];                                   //I'm taking the first plane that has been created
+                m_BasketManager.PlaceBasket(plane.transform.position);          //Adding a basket at that position
+                m_isTheBasketPlaced = true;
+
+            }
         }
     }
 }
