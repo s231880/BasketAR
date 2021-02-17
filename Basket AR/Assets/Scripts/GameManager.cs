@@ -21,23 +21,18 @@ namespace BBAR
         public static GameManager Instance;
         public UIManager m_UIManager;
         private InputManager m_InputManager;
-        private BasketManager m_BasketManager;
+        public BasketManager m_BasketManager;
 
         private ObjectPool m_Pool = new ObjectPool();
-        private GameManager m_BallPrefab;
         public GameObject m_ActiveBall;
-        public Ball m_ActiveBallScript;
 
-        private bool m_isTheBasketPlaced = false;
+        public bool m_IsTheBasketPlaced = false;
 
         //-----------------------------------------------------------------------
         //AR variables
 
-        private ARRaycastManager m_RayCastManager;
         private ARPlaneManager m_PlaneManager;
-        private Pose m_PlacementPose;
-        private Vector2 m_TouchPosition = default;
-        private static List<ARRaycastHit> m_HitsList;
+        
 
         private GameState m_State;
         public GameState m_state
@@ -70,39 +65,12 @@ namespace BBAR
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             CreateObjPool(ball);                                   // Create the pool
-            ActivateBall();
             m_State = GameState.Started;                           // Start the game
-        }
-
-        void Update()
-        {
-#if !UNITY_EDITOR
-            if (!m_isTheBasketPlaced)
-            {
-                m_UIManager.SetLabelTest("!m_isTheBasketPlaced");
-                if (ThereIsAValidPlane())
-                {
-                    m_BasketManager.PlaceBasket(m_PlacementPose.position);
-                    m_isTheBasketPlaced = true;
-                }
-            }
-#else
-            if (!m_isTheBasketPlaced)
-            {
-                Vector3 basketPos = Camera.main.transform.forward * 20;
-                transform.InverseTransformDirection(basketPos);
-                m_BasketManager.PlaceBasket(basketPos);
-                m_isTheBasketPlaced = true;
-            }
-#endif
         }
 
         private void ARVariablesInitialisation()
         {
-            var sessionOriginTransform = gameObject.transform.Find("AR Session Origin");
-            m_PlaneManager = sessionOriginTransform.GetComponent<ARPlaneManager>();
-            m_RayCastManager = sessionOriginTransform.GetComponent<ARRaycastManager>();
-
+            m_PlaneManager = gameObject.transform.Find("AR Session Origin").GetComponent<ARPlaneManager>();
             m_PlaneManager.planesChanged += PlaneStateChanged;      //Adding event when plan is detected
         }
 
@@ -133,37 +101,45 @@ namespace BBAR
         public void ActivateBall()
         {
             m_ActiveBall = m_Pool.GetObject();
-            m_ActiveBall.transform.position = Vector3.zero;
-            m_ActiveBallScript = m_ActiveBall.GetComponent<Ball>();
+            m_ActiveBall.transform.position = Camera.main.transform.position + Camera.main.transform.forward; 
         }
 
-        public void DisableBall()
+        public void ReturnBallTothePool(GameObject thrownBall)
         {
-            m_Pool.ReturnObject(m_ActiveBall);
-            m_ActiveBall = null;
+            m_Pool.ReturnObject(thrownBall);
         }
         //-----------------------------------------------------------------------
-        //Checking if there are valid planes
-        private bool ThereIsAValidPlane()
+        //Throw the ball
+        public void ThrowActiveBall(Vector2 startingPos, Vector2 finalPos)
         {
-            bool result = (m_RayCastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
-            if (result)
-            {
-                m_PlacementPose = m_HitsList[0].pose;
+            float differenceY = (startingPos.y - finalPos.y) / Screen.height * 100;
 
-            }
-            return result;
+            float throwSpeed = 2f; //Random value
+            // I think we should use as speed the difference between when the user has pressed the screen and when has release it
+            float speed = throwSpeed * differenceY;
+
+            float x = (startingPos.x / Screen.width) - (finalPos.x / Screen.width);
+
+            x = Mathf.Abs(Input.mousePosition.x - finalPos.x) / Screen.width * 100 * x;
+
+            Vector3 direction = new Vector3(x, 0f, 1f);
+            direction = Camera.main.transform.TransformDirection(direction);
+            //Vector3 direction = finalPos - startingPos;
+
+            m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed);
+
         }
-
+        //-----------------------------------------------------------------------
         //Function that detects when plane state change => the state can be: Added, Updated, Removed
+        //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
-            if(arg.added != null && !m_isTheBasketPlaced)                       // A plane has been added
+            if (arg.added != null && !m_IsTheBasketPlaced)                                                   // A plane has been added
             {
-                ARPlane plane = arg.added[0];                                   //I'm taking the first plane that has been created
-                m_BasketManager.PlaceBasket(plane.transform.position);          //Adding a basket at that position
-                m_isTheBasketPlaced = true;
-
+                ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
+                m_BasketManager.PlaceTheBasket(plane.transform.position, plane.transform.rotation);         //Adding a basket at that position
+                m_IsTheBasketPlaced = true;
+                ActivateBall();
             }
         }
     }
