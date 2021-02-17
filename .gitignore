@@ -3,3 +3,5 @@
 ################################################################################
 
 *.sqlite
+/.vs/BasketAR/v15/Browse.VC.opendb
+/.vs/BasketAR/v15/Browse.VC.db
