@@ -21,22 +21,19 @@ namespace BBAR
         public static GameManager Instance;
         public UIManager m_UIManager;
         private InputManager m_InputManager;
-        private BasketManager m_BasketManager;
+        public BasketManager m_BasketManager;
 
         private ObjectPool m_Pool = new ObjectPool();
         private GameManager m_BallPrefab;
         private GameObject m_ActiveBall;
 
-        private bool m_isTheBasketPlaced = false;
+        public bool m_IsTheBasketPlaced = false;
 
         //-----------------------------------------------------------------------
         //AR variables
 
-        private ARRaycastManager m_RayCastManager;
         private ARPlaneManager m_PlaneManager;
-        private Pose m_PlacementPose;
-        private Vector2 m_TouchPosition = default;
-        private static List<ARRaycastHit> m_HitsList;
+        
 
         private GameState m_State;
         public GameState m_state
@@ -75,33 +72,11 @@ namespace BBAR
 
         void Update()
         {
-#if !UNITY_EDITOR
-            if (!m_isTheBasketPlaced)
-            {
-                m_UIManager.SetLabelTest("!m_isTheBasketPlaced");
-                if (ThereIsAValidPlane())
-                {
-                    m_BasketManager.PlaceBasket(m_PlacementPose.position);
-                    m_isTheBasketPlaced = true;
-                }
-            }
-#else
-            if (!m_isTheBasketPlaced)
-            {
-                Vector3 basketPos = Camera.main.transform.forward * 20;
-                transform.InverseTransformDirection(basketPos);
-                m_BasketManager.PlaceBasket(basketPos);
-                m_isTheBasketPlaced = true;
-            }
-#endif
         }
 
         private void ARVariablesInitialisation()
         {
-            var sessionOriginTransform = gameObject.transform.Find("AR Session Origin");
-            m_PlaneManager = sessionOriginTransform.GetComponent<ARPlaneManager>();
-            m_RayCastManager = sessionOriginTransform.GetComponent<ARRaycastManager>();
-
+            m_PlaneManager = gameObject.transform.Find("AR Session Origin").GetComponent<ARPlaneManager>();
             m_PlaneManager.planesChanged += PlaneStateChanged;      //Adding event when plan is detected
         }
 
@@ -142,27 +117,17 @@ namespace BBAR
         }
         //-----------------------------------------------------------------------
         //Checking if there are valid planes
-        private bool ThereIsAValidPlane()
-        {
-            bool result = (m_RayCastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
-            if (result)
-            {
-                m_PlacementPose = m_HitsList[0].pose;
-
-            }
-            return result;
-        }
+       
 
         //Function that detects when plane state change => the state can be: Added, Updated, Removed
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
-            if(arg.added != null && !m_isTheBasketPlaced)                       // A plane has been added
-            {
-                ARPlane plane = arg.added[0];                                   //I'm taking the first plane that has been created
-                m_BasketManager.PlaceBasket(plane.transform.position);          //Adding a basket at that position
-                m_isTheBasketPlaced = true;
-
-            }
+            //if(arg.added != null && !m_IsTheBasketPlaced)                                                   // A plane has been added
+            //{
+            //    ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
+            //    m_BasketManager.PlaceBasket(plane.transform.position, plane.transform.rotation);            //Adding a basket at that position
+            //    m_IsTheBasketPlaced = true;
+            //}
         }
     }
 }
