@@ -3,22 +3,15 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 
-
+/// <summary>
+/// Sorry man, I'm become kind of code Nazi, if i see messy things I get mad
+/// </summary>
 namespace BBAR
 {
     public class InputManager : MonoBehaviour
     {
-        [SerializeField]
-        private float throwSpeed;
-        private float speed;
-        private float lastMouseX, lastMouseY;
+        private Vector2 m_StartingPosition, m_FinalPosition;
 
-        private bool thrown, holding;
-        private Rigidbody _rigidBody;
-        private Vector3 newPosition;
-
-        private bool m_ThereIsABall = false;    //For testing purpose only
-        private bool m_IsUserPlacingTheBasket = false;
         private bool m_HoldingTouch = false;
 
         //-----------------------------------------------------------------------
@@ -34,103 +27,39 @@ namespace BBAR
         }
         void Update()
         {
-
-            if (holding)
-                OnTouch();
-
-            if (thrown)
-                return;
-
             UpdatePlacementPose();
         }
-        /// <summary>
-        /// The first part (!UNITY_EDITOR) is the one which is gonna do the actual work once the build 
-        /// is put on the phone, while the second one is only for you to make our life easier in development phase
-        /// because allow us to test the app on the editor without doing a build each time
-        /// </summary>
+
         private void UpdatePlacementPose()
         {
 
 #if !UNITY_EDITOR
             if (Input.touchCount == 1)
             {
-                Touch touch_ = Input.GetTouch(0);
+                Touch touch = Input.GetTouch(0);
 
-                if (touch_.phase == TouchPhase.Began)
-                    OnTouchBegan(touch_.position);
+                if (touch.phase == TouchPhase.Began)
+                    OnTouchBegan(touch.position);
 
-                else if (touch_.phase == TouchPhase.Moved)
-                    OnTouchMoved(touch_.position);
+                else if (touch.phase == TouchPhase.Moved)
+                    OnTouchMoved(touch.position);
 
-                else if (touch_.phase == TouchPhase.Ended)
-                    OnTouchEnded(touch_.position);
-            }
-
-            if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Began)
-            {
-                Ray ray = Camera.main.ScreenPointToRay(Input.GetTouch(0).position);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 100f))
-                {
-                    if (hit.transform == GameManager.Instance.m_ActiveBall.transform)
-                    {
-                        holding = true;
-                        GameManager.Instance.m_ActiveBall.transform.SetParent(null);
-                    }
-                }
-            }
-
-            if (Input.touchCount == 1 && Input.GetTouch(0).phase == TouchPhase.Ended)
-            {
-                if (lastMouseY < Input.GetTouch(0).position.y)
-                {
-                    ThrowBall(Input.GetTouch(0).position);
-                }
-            }
-
-            if (Input.touchCount == 1)
-            {
-                lastMouseX = Input.GetTouch(0).position.x;
-                lastMouseY = Input.GetTouch(0).position.y;
-
-                GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
+                else if (touch.phase == TouchPhase.Ended)
+                    OnTouchEnded(touch.position);
             }
 #else
             if (true == Input.GetMouseButtonDown(0))
             {
-                //OnTouchBegan(Input.mousePosition);
-                Ray ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 100f))
-                {
-                    if (hit.transform == GameManager.Instance.m_ActiveBall.transform)
-                    {
-                        holding = true;
-                        GameManager.Instance.m_ActiveBall.transform.SetParent(null);
-                    }
-                }
+                OnTouchBegan(Input.mousePosition);
             }
-            if (true == Input.GetMouseButtonUp(0))
+            else if (true == Input.GetMouseButton(0))
             {
-                //OnTouchEnded(Input.mousePosition);
-                if (lastMouseY < Input.mousePosition.y)
-                {
-                    ThrowBall(Input.mousePosition);
-                }
+                OnTouchMoved(Input.mousePosition);
             }
-
-             if (true == Input.GetMouseButton(0))
+            else if (true == Input.GetMouseButtonUp(0))
             {
-                //OnTouchMoved(Input.mousePosition);
-                lastMouseX = Input.mousePosition.x;
-                lastMouseY = Input.mousePosition.y;
-
-                GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
+                OnTouchEnded(Input.mousePosition);
             }
-
-           
 #endif
         }
 
@@ -141,7 +70,6 @@ namespace BBAR
             {
                 if (AValidPlaneHasBeenTouched())
                 {
-                    m_IsUserPlacingTheBasket = true;                    //The user is placing the basket
                     GameManager.Instance.m_BasketManager.PlaceTheBasket(m_PlacementPose.position, m_PlacementPose.rotation);
                 }
 
@@ -149,25 +77,20 @@ namespace BBAR
             //Else throw the ball or do all the rest
             else
             {
-
-                Ray ray = Camera.main.ScreenPointToRay(touchPosition);
-                RaycastHit hit;
-
-                if (Physics.Raycast(ray, out hit, 100f))
+                if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
-                    if (hit.transform == GameManager.Instance.m_ActiveBall.transform)
-                    {
-                        holding = true;
-                        GameManager.Instance.m_ActiveBall.transform.SetParent(null);
-                    }
+                    m_StartingPosition = m_TouchPosition;
+                    //The ball schoud be already active is moved into a specific position by the GetObject function into ObjectPool.cs
+                    //GameManager.Instance.m_ActiveBall.transform.SetParent(null);   
                 }
+
             }
         }
 
         private void OnTouchMoved(Vector3 touchPosition)
         {
             m_TouchPosition = touchPosition;
-            if (!GameManager.Instance.m_IsTheBasketPlaced && m_IsUserPlacingTheBasket)
+            if (!GameManager.Instance.m_IsTheBasketPlaced)
             {
                 if (AValidPlaneHasBeenTouched())
                 {
@@ -176,40 +99,51 @@ namespace BBAR
             }
             else
             {
-                lastMouseX = touchPosition.x;
-                lastMouseY = touchPosition.y;
+                //m_LastMouseX = touchPosition.x;
+                //m_LastMouseY = touchPosition.y;
 
-                GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
+                //Not sure why you want this man, the ball should move only when the the user release the touch
+                //GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
             }
         }
 
         private void OnTouchEnded(Vector3 touchPosition)
         {
             m_TouchPosition = touchPosition;
-            if (!GameManager.Instance.m_IsTheBasketPlaced && m_IsUserPlacingTheBasket)
+            if (!GameManager.Instance.m_IsTheBasketPlaced)
             {
                 if (AValidPlaneHasBeenTouched())
                 {
-                    GameManager.Instance.m_IsTheBasketPlaced = true;
-
+                    GameManager.Instance.m_IsTheBasketPlaced = true;        //Place the basket
+                    GameManager.Instance.ActivateBall();                    //Activate the first ball
                 }
                 else
                 {
-                    m_IsUserPlacingTheBasket = false;
                     GameManager.Instance.m_BasketManager.DeleteBasket();
                 }
             }
-            else 
+            else //Throw the ball
             {
-               //Throw the ball
+                if (m_StartingPosition.y < m_TouchPosition.y)
+                {
+                    m_FinalPosition = m_TouchPosition;
+                    GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition);  //Throw the ball
+                    GameManager.Instance.ActivateBall();                                        //Active a new ball
+                }
+                else
+                {
+                    ResetVariables();
+                }
             }
         }
+        //-----------------------------------------------------------------------
+        //Raycast functions
 
         private bool AValidPlaneHasBeenTouched()
         {
-            bool result;
 #if !UNITY_EDITOR
-            result = (m_RayCastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
+            GameManager.Instance.m_UIManager.SetLabelTest("QUI??");
+            bool result = (m_RayCastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
             if (result)
             {
                 m_PlacementPose = m_HitsList[0].pose;
@@ -221,64 +155,34 @@ namespace BBAR
             }
 
 #else
-            result = true;
+            bool result = true;
             m_PlacementPose = new Pose(Vector3.zero, Quaternion.identity);
 #endif
             return result;
-            //Throw the ball
-            if (lastMouseY < touchPosition.y)
+
+        }
+
+        private bool ActiveBallHasBeenTouched(Vector2 touchPosition)
+        {
+            Ray ray = Camera.main.ScreenPointToRay(touchPosition);
+            RaycastHit hit;
+            if (Physics.Raycast(ray, out hit, 100f))
             {
-                ThrowBall(touchPosition);
+                if (hit.transform == GameManager.Instance.m_ActiveBall.transform)  //I'll do this check with the collision instead of the pos because I'm afraid that this could cause errors
+                {
+                    return true;
+                }
+                else
+                    return false;
             }
+            return false;
         }
+        //-----------------------------------------------------------------------
 
-        void Reset()
+        private void ResetVariables()
         {
-            CancelInvoke();
-            GameManager.Instance.m_ActiveBall.transform.position = Camera.main.ViewportToWorldPoint(new Vector3(0.5f, 0.1f, Camera.main.nearClipPlane * 7.5f));
-            newPosition = GameManager.Instance.m_ActiveBall.transform.position;
-
-            thrown = holding = false;
-            GameManager.Instance.m_ActiveBallScript._rigidBody.useGravity = false;
-            GameManager.Instance.m_ActiveBallScript._rigidBody.velocity = Vector3.zero;
-            GameManager.Instance.m_ActiveBallScript._rigidBody.angularVelocity = Vector3.zero;
-            GameManager.Instance.m_ActiveBall.transform.rotation = Quaternion.Euler(0f, 200f, 0f);
-            GameManager.Instance.m_ActiveBall.transform.SetParent(Camera.main.transform);
-        }
-
-        void OnTouch()
-        {
-#if !UNITY_EDITOR
-            Vector3 mousePos = Input.GetTouch(0).position;
-#else
-        Vector3 mousePos = Input.mousePosition;
-#endif
-            mousePos.z = Camera.main.nearClipPlane * 7.5f;
-
-            newPosition = Camera.main.ScreenToWorldPoint(mousePos);
-        }
-
-        void ThrowBall(Vector2 mousePos)
-        {
-            GameManager.Instance.m_ActiveBallScript._rigidBody.useGravity = true;
-            float differenceY = (mousePos.y - lastMouseY) / Screen.height * 100;
-            speed = GameManager.Instance.m_ActiveBallScript.throwSpeed * differenceY;
-            float x = (mousePos.x / Screen.width) - (lastMouseX / Screen.width);
-#if !UNITY_EDITOR
-            x = Mathf.Abs(Input.GetTouch(0).position.x - lastMouseX) / Screen.width * 100 * x;
-#else
-            x = Mathf.Abs(Input.mousePosition.x - lastMouseX) / Screen.width * 100 * x;
-#endif
-
-
-            Vector3 direction = new Vector3(x, 0f, 1f);
-            direction = Camera.main.transform.TransformDirection(direction);
-
-            GameManager.Instance.m_ActiveBallScript._rigidBody.AddForce((direction * speed / 2f) + (Vector3.up * speed));
-            holding = false;
-            thrown = true;
-
-            Invoke("Reset", 5.0f);
+            m_StartingPosition = Vector2.zero;
+            m_FinalPosition = Vector2.zero;
         }
     }
 }

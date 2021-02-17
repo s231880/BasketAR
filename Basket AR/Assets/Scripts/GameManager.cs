@@ -24,9 +24,7 @@ namespace BBAR
         public BasketManager m_BasketManager;
 
         private ObjectPool m_Pool = new ObjectPool();
-        private GameManager m_BallPrefab;
         public GameObject m_ActiveBall;
-        public Ball m_ActiveBallScript;
 
         public bool m_IsTheBasketPlaced = false;
 
@@ -67,12 +65,7 @@ namespace BBAR
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             CreateObjPool(ball);                                   // Create the pool
-            ActivateBall();
             m_State = GameState.Started;                           // Start the game
-        }
-
-        void Update()
-        {
         }
 
         private void ARVariablesInitialisation()
@@ -108,28 +101,46 @@ namespace BBAR
         public void ActivateBall()
         {
             m_ActiveBall = m_Pool.GetObject();
-            m_ActiveBall.transform.position = Vector3.zero;
-            m_ActiveBallScript = m_ActiveBall.GetComponent<Ball>();
+            m_ActiveBall.transform.position = Camera.main.transform.position + Camera.main.transform.forward; 
         }
 
-        public void DisableBall()
+        public void ReturnBallTothePool(GameObject thrownBall)
         {
-            m_Pool.ReturnObject(m_ActiveBall);
-            m_ActiveBall = null;
+            m_Pool.ReturnObject(thrownBall);
         }
         //-----------------------------------------------------------------------
-        //Checking if there are valid planes
-       
+        //Throw the ball
+        public void ThrowActiveBall(Vector2 startingPos, Vector2 finalPos)
+        {
+            float differenceY = (startingPos.y - finalPos.y) / Screen.height * 100;
 
+            float throwSpeed = 2f; //Random value
+            // I think we should use as speed the difference between when the user has pressed the screen and when has release it
+            float speed = throwSpeed * differenceY;
+
+            float x = (startingPos.x / Screen.width) - (finalPos.x / Screen.width);
+
+            x = Mathf.Abs(Input.mousePosition.x - finalPos.x) / Screen.width * 100 * x;
+
+            Vector3 direction = new Vector3(x, 0f, 1f);
+            direction = Camera.main.transform.TransformDirection(direction);
+            //Vector3 direction = finalPos - startingPos;
+
+            m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed);
+
+        }
+        //-----------------------------------------------------------------------
         //Function that detects when plane state change => the state can be: Added, Updated, Removed
+        //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
-            //if(arg.added != null && !m_IsTheBasketPlaced)                                                   // A plane has been added
-            //{
-            //    ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
-            //    m_BasketManager.PlaceBasket(plane.transform.position, plane.transform.rotation);            //Adding a basket at that position
-            //    m_IsTheBasketPlaced = true;
-            //}
+            if (arg.added != null && !m_IsTheBasketPlaced)                                                   // A plane has been added
+            {
+                ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
+                m_BasketManager.PlaceTheBasket(plane.transform.position, plane.transform.rotation);         //Adding a basket at that position
+                m_IsTheBasketPlaced = true;
+                ActivateBall();
+            }
         }
     }
 }
