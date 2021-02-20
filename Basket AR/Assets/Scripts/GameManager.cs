@@ -54,7 +54,7 @@ namespace BBAR
             m_UIManager = this.gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
 
-            m_InputManager = this.gameObject.AddComponent<InputManager>();
+            m_InputManager = this.gameObject.transform.Find("AR Session Origin").gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
 
             m_BasketManager = this.gameObject.AddComponent<BasketManager>();
@@ -134,12 +134,13 @@ namespace BBAR
         //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
-            if (arg.added != null && !m_IsTheBasketPlaced)                                                   // A plane has been added
+            if (arg.added != null)                                                   // A plane has been added
             {
-                ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
-                m_BasketManager.PlaceTheBasket(plane.transform.position, plane.transform.rotation);         //Adding a basket at that position
-                m_IsTheBasketPlaced = true;
-                ActivateBall();
+                m_InputManager.m_ThereIsAnActivePlane = true;
+                //ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
+                //m_BasketManager.PlaceTheBasket(plane.transform.position, plane.transform.rotation);         //Adding a basket at that position
+                //m_IsTheBasketPlaced = true;
+                //ActivateBall();
             }
         }
     }

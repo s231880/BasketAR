@@ -8,6 +8,7 @@ namespace BBAR
     {
         private GameObject m_BasketPrefab;
         private GameObject m_ActiveBasket;
+        private const float BASKET_HEIGHT = 1.2f;                       //Temporary value
 
         public void Initialise()
         {
@@ -22,8 +23,9 @@ namespace BBAR
 
         public void PlaceTheBasket(Vector3 position, Quaternion rotation)
         {
-            m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab ,position, m_BasketPrefab.transform.rotation);   //Instantiate the basket
-            m_ActiveBasket.transform.position += (Vector3.back * 0.1f);                                             //Place it in front of the plane
+            Vector3 pos = position;
+            pos.y = BASKET_HEIGHT;
+            m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab , pos, m_BasketPrefab.transform.rotation);       //Instantiate the basket
             m_ActiveBasket.transform.rotation.eulerAngles.Set(90,180, rotation.eulerAngles.z);                      //Rotate it => Temporary due tyo wrong asset transform
         }
 

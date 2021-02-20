@@ -46,7 +46,11 @@ namespace BBAR
                 return obj;
             }
             else
+            {
+                Debug.LogError("The pool is empty!");
                 return null;
+            }
+                
         }
 
         public void ReturnObject(GameObject obj)

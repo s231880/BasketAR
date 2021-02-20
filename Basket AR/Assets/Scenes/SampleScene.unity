@@ -212,6 +212,9 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_UIManager: {fileID: 0}
+  m_BasketManager: {fileID: 0}
+  m_ActiveBall: {fileID: 0}
+  m_IsTheBasketPlaced: 0
 --- !u!4 &1306435374
 Transform:
   m_ObjectHideFlags: 0
@@ -562,7 +565,7 @@ Camera:
   serializedVersion: 2
   m_ClearFlags: 1
   m_BackGroundColor: {r: 0, g: 0, b: 0, a: 1}
-  m_projectionMatrixMode: 1
+  m_projectionMatrixMode: 2
   m_GateFitMode: 2
   m_FOVAxisMode: 0
   m_SensorSize: {x: 36, y: 24}
@@ -576,7 +579,7 @@ Camera:
     height: 1
   near clip plane: 0.1
   far clip plane: 40
-  field of view: 30.4
+  field of view: 26.991467
   orthographic: 0
   orthographic size: 5
   m_Depth: 0
@@ -750,7 +753,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   m_PlanePrefab: {fileID: 8791364318219556175, guid: 739d9c7cb98ba1f409037c70e68a658d, type: 3}
-  m_DetectionMode: 2
+  m_DetectionMode: 1
 --- !u!114 &2134639022
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -796,7 +799,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 1
+  m_IsActive: 0
 --- !u!108 &2138677392
 Light:
   m_ObjectHideFlags: 0
