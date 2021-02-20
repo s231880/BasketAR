@@ -105,7 +105,6 @@ namespace BBAR
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
-                    //GameManager.Instance.m_BasketManager.MoveTheBasket(m_PlacementPose.position);
                     m_BasketCursor.transform.position = m_PlacementPose.position;
                 }
             }
@@ -135,7 +134,7 @@ namespace BBAR
                 }
                 else
                 {
-                    GameManager.Instance.m_BasketManager.DeleteBasket();
+                    Destroy(m_BasketCursor);
                 }
             }
             else //Throw the ball
@@ -163,16 +162,13 @@ namespace BBAR
             var ray = m_ARCamera.ScreenPointToRay(touchPosition);
             if(m_RayCastManager.Raycast(ray, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
             {
-                GameManager.Instance.m_UIManager.SetLabelTest("Valid Plane Hit");
                 m_PlacementPose = m_HitsList[0].pose;
                 return true;
             }
             else
             {
-                GameManager.Instance.m_UIManager.SetLabelTest("Invalid Plane Hit");
                 return false;
             }
-
 #else
             m_PlacementPose = new Pose(Vector3.zero, Quaternion.identity);
             return true;
@@ -200,10 +196,6 @@ namespace BBAR
             m_StartingPosition = Vector2.zero;
             m_FinalPosition = Vector2.zero;
         }
-
         //-----------------------------------------------------------------------
-        private void InstantiateBasketCursor()
-        {
-        }
     }
 }
