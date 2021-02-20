@@ -21,12 +21,16 @@ namespace BBAR
         private Vector2 m_TouchPosition = default;
         private ARRaycastManager m_RayCastManager;
         private Camera m_ARCamera;
+        private List<ARRaycastHit> m_HitsList = new List<ARRaycastHit>();
 
-        private List<ARRaycastHit> m_HitsList;
+        //-----------------------------------------------------------------------
+        private GameObject m_BasketPositionCursorPrefab;
+        private GameObject m_BasketCursor;
         public void Initialise()
         {
             m_RayCastManager = gameObject.GetComponent<ARRaycastManager>();
             m_ARCamera = this.GetComponentInChildren<Camera>();
+            m_BasketPositionCursorPrefab = Resources.Load<GameObject>("BasketPositionCursor");
         }
         void Update()
         {
@@ -74,13 +78,10 @@ namespace BBAR
             m_TouchPosition = touchPosition;
             if (!GameManager.Instance.m_IsTheBasketPlaced)              //If the basket hasn't been placed yet
             {
-                
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
-                    GameManager.Instance.m_BasketManager.PlaceTheBasket(m_PlacementPose.position, m_PlacementPose.rotation);
-                    GameManager.Instance.m_UIManager.SetLabelTest("");
+                    m_BasketCursor = Instantiate(m_BasketPositionCursorPrefab, m_PlacementPose.position, m_PlacementPose.rotation);
                 }
-
             }
             //Else throw the ball or do all the rest
             else
@@ -90,7 +91,7 @@ namespace BBAR
                     m_StartingPosition = m_TouchPosition;
                     m_HoldingTouch = true;
                     //The ball schoud be already active is moved into a specific position by the GetObject function into ObjectPool.cs
-                    //GameManager.Instance.m_ActiveBall.transform.SetParent(null);   
+                    //GameManager.Instance.m_ActiveBall.transform.SetParent(null);
                 }
 
             }
@@ -104,7 +105,8 @@ namespace BBAR
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
-                    GameManager.Instance.m_BasketManager.MoveTheBasket(m_PlacementPose.position);
+                    //GameManager.Instance.m_BasketManager.MoveTheBasket(m_PlacementPose.position);
+                    m_BasketCursor.transform.position = m_PlacementPose.position;
                 }
             }
             //Throwing the ball
@@ -126,8 +128,10 @@ namespace BBAR
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
-                    GameManager.Instance.m_IsTheBasketPlaced = true;        //Place the basket
-                    GameManager.Instance.ActivateBall();                    //Activate the first ball
+                    Destroy(m_BasketCursor);
+                    GameManager.Instance.m_BasketManager.PlaceTheBasket(m_PlacementPose.position, m_PlacementPose.rotation);    //Place the basket
+                    GameManager.Instance.m_IsTheBasketPlaced = true;
+                    GameManager.Instance.ActivateBall();                                                                        //Activate the first ball
                 }
                 else
                 {
@@ -156,7 +160,6 @@ namespace BBAR
         private bool AValidPlaneHasBeenTouched(Vector2 touchPosition)
         {
 #if !UNITY_EDITOR
-            GameManager.Instance.m_UIManager.SetLabelTest("Valid Plane Hit");
             var ray = m_ARCamera.ScreenPointToRay(touchPosition);
             if(m_RayCastManager.Raycast(ray, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
             {
@@ -174,8 +177,6 @@ namespace BBAR
             m_PlacementPose = new Pose(Vector3.zero, Quaternion.identity);
             return true;
 #endif
-
-
         }
 
         private bool ActiveBallHasBeenTouched(Vector2 touchPosition)
@@ -194,11 +195,15 @@ namespace BBAR
             return false;
         }
         //-----------------------------------------------------------------------
-
         private void ResetVariables()
         {
             m_StartingPosition = Vector2.zero;
             m_FinalPosition = Vector2.zero;
+        }
+
+        //-----------------------------------------------------------------------
+        private void InstantiateBasketCursor()
+        {
         }
     }
 }
