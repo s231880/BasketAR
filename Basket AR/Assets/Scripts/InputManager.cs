@@ -2,6 +2,7 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Sorry man, I'm become kind of code Nazi, if i see messy things I get mad
@@ -11,7 +12,7 @@ namespace BBAR
     public class InputManager : MonoBehaviour
     {
         private Vector2 m_StartingPosition, m_FinalPosition;
-
+        public bool m_ThereIsAnActivePlane = false;
         private bool m_HoldingTouch = false;
 
         //-----------------------------------------------------------------------
@@ -19,11 +20,13 @@ namespace BBAR
         private Pose m_PlacementPose;
         private Vector2 m_TouchPosition = default;
         private ARRaycastManager m_RayCastManager;
+        private Camera m_ARCamera;
 
-        private static List<ARRaycastHit> m_HitsList;
+        private List<ARRaycastHit> m_HitsList;
         public void Initialise()
         {
-            m_RayCastManager = gameObject.transform.Find("AR Session Origin").GetComponent<ARRaycastManager>();
+            m_RayCastManager = gameObject.GetComponent<ARRaycastManager>();
+            m_ARCamera = this.GetComponentInChildren<Camera>();
         }
         void Update()
         {
@@ -34,8 +37,10 @@ namespace BBAR
         {
 
 #if !UNITY_EDITOR
-            if (Input.touchCount == 1)
+            if(m_ThereIsAnActivePlane)
             {
+               if (Input.touchCount > 0)
+               {
                 Touch touch = Input.GetTouch(0);
 
                 if (touch.phase == TouchPhase.Began)
@@ -46,6 +51,7 @@ namespace BBAR
 
                 else if (touch.phase == TouchPhase.Ended)
                     OnTouchEnded(touch.position);
+               }  
             }
 #else
             if (true == Input.GetMouseButtonDown(0))
@@ -63,14 +69,16 @@ namespace BBAR
 #endif
         }
 
-        private void OnTouchBegan(Vector3 touchPosition)
+        private void OnTouchBegan(Vector2 touchPosition)
         {
             m_TouchPosition = touchPosition;
             if (!GameManager.Instance.m_IsTheBasketPlaced)              //If the basket hasn't been placed yet
             {
-                if (AValidPlaneHasBeenTouched())
+                
+                if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
                     GameManager.Instance.m_BasketManager.PlaceTheBasket(m_PlacementPose.position, m_PlacementPose.rotation);
+                    GameManager.Instance.m_UIManager.SetLabelTest("");
                 }
 
             }
@@ -80,6 +88,7 @@ namespace BBAR
                 if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
                     m_StartingPosition = m_TouchPosition;
+                    m_HoldingTouch = true;
                     //The ball schoud be already active is moved into a specific position by the GetObject function into ObjectPool.cs
                     //GameManager.Instance.m_ActiveBall.transform.SetParent(null);   
                 }
@@ -87,32 +96,35 @@ namespace BBAR
             }
         }
 
-        private void OnTouchMoved(Vector3 touchPosition)
+        private void OnTouchMoved(Vector2 touchPosition)
         {
             m_TouchPosition = touchPosition;
-            if (!GameManager.Instance.m_IsTheBasketPlaced)
+            //Placing the basket
+            if (!GameManager.Instance.m_IsTheBasketPlaced)      
             {
-                if (AValidPlaneHasBeenTouched())
+                if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
                     GameManager.Instance.m_BasketManager.MoveTheBasket(m_PlacementPose.position);
                 }
             }
+            //Throwing the ball
             else
             {
                 //m_LastMouseX = touchPosition.x;
                 //m_LastMouseY = touchPosition.y;
 
                 //Not sure why you want this man, the ball should move only when the the user release the touch
+                
                 //GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
             }
         }
 
-        private void OnTouchEnded(Vector3 touchPosition)
+        private void OnTouchEnded(Vector2 touchPosition)
         {
             m_TouchPosition = touchPosition;
             if (!GameManager.Instance.m_IsTheBasketPlaced)
             {
-                if (AValidPlaneHasBeenTouched())
+                if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
                     GameManager.Instance.m_IsTheBasketPlaced = true;        //Place the basket
                     GameManager.Instance.ActivateBall();                    //Activate the first ball
@@ -129,36 +141,40 @@ namespace BBAR
                     m_FinalPosition = m_TouchPosition;
                     GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition);  //Throw the ball
                     GameManager.Instance.ActivateBall();                                        //Active a new ball
+                    
                 }
                 else
                 {
                     ResetVariables();
                 }
+                m_HoldingTouch = false;
             }
         }
         //-----------------------------------------------------------------------
         //Raycast functions
 
-        private bool AValidPlaneHasBeenTouched()
+        private bool AValidPlaneHasBeenTouched(Vector2 touchPosition)
         {
 #if !UNITY_EDITOR
-            GameManager.Instance.m_UIManager.SetLabelTest("QUI??");
-            bool result = (m_RayCastManager.Raycast(m_TouchPosition, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon));
-            if (result)
+            GameManager.Instance.m_UIManager.SetLabelTest("Valid Plane Hit");
+            var ray = m_ARCamera.ScreenPointToRay(touchPosition);
+            if(m_RayCastManager.Raycast(ray, m_HitsList, UnityEngine.XR.ARSubsystems.TrackableType.PlaneWithinPolygon))
             {
-                m_PlacementPose = m_HitsList[0].pose;
                 GameManager.Instance.m_UIManager.SetLabelTest("Valid Plane Hit");
+                m_PlacementPose = m_HitsList[0].pose;
+                return true;
             }
             else
             {
                 GameManager.Instance.m_UIManager.SetLabelTest("Invalid Plane Hit");
+                return false;
             }
 
 #else
-            bool result = true;
             m_PlacementPose = new Pose(Vector3.zero, Quaternion.identity);
+            return true;
 #endif
-            return result;
+
 
         }
 
