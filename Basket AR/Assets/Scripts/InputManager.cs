@@ -31,6 +31,7 @@ namespace BBAR
             m_RayCastManager = gameObject.GetComponent<ARRaycastManager>();
             m_ARCamera = this.GetComponentInChildren<Camera>();
             m_BasketPositionCursorPrefab = Resources.Load<GameObject>("BasketPositionCursor");
+            //GameManager.Instance.m_UIManager.SetLabelTest("IM Initted");
         }
         void Update()
         {
@@ -40,7 +41,7 @@ namespace BBAR
         private void UpdatePlacementPose()
         {
 
-#if !UNITY_EDITOR
+//#if !UNITY_EDITOR
             if(m_ThereIsAnActivePlane)
             {
                if (Input.touchCount > 0)
@@ -57,7 +58,7 @@ namespace BBAR
                     OnTouchEnded(touch.position);
                }  
             }
-#else
+//#else
             if (true == Input.GetMouseButtonDown(0))
             {
                 OnTouchBegan(Input.mousePosition);
@@ -70,12 +71,14 @@ namespace BBAR
             {
                 OnTouchEnded(Input.mousePosition);
             }
-#endif
+//#endif
         }
 
         private void OnTouchBegan(Vector2 touchPosition)
         {
+            GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
+            
             if (!GameManager.Instance.m_IsTheBasketPlaced)              //If the basket hasn't been placed yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
@@ -99,6 +102,7 @@ namespace BBAR
 
         private void OnTouchMoved(Vector2 touchPosition)
         {
+            GameManager.Instance.m_UIManager.SetLabelTest("Touch In Progress");
             m_TouchPosition = touchPosition;
             //Placing the basket
             if (!GameManager.Instance.m_IsTheBasketPlaced)      
@@ -123,6 +127,7 @@ namespace BBAR
         private void OnTouchEnded(Vector2 touchPosition)
         {
             m_TouchPosition = touchPosition;
+            GameManager.Instance.m_UIManager.SetLabelTest("Touch Ended");
             if (!GameManager.Instance.m_IsTheBasketPlaced)
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
