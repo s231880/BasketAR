@@ -66,12 +66,16 @@ namespace BBAR
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
+
+            m_IsTheBasketPlaced = true;
+            //m_UIManager.SetLabelTest("Game Manager is Awake");
         }
 
         private void ARVariablesInitialisation()
         {
             m_PlaneManager = gameObject.transform.Find("AR Session Origin").GetComponent<ARPlaneManager>();
             m_PlaneManager.planesChanged += PlaneStateChanged;      //Adding event when plan is detected
+            m_UIManager.SetLabelTest("AR Initted");
         }
 
         private void CreateObjPool(GameObject ball)
