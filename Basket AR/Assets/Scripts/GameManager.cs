@@ -134,13 +134,10 @@ namespace BBAR
         //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
-            if (arg.added != null)                                                   // A plane has been added
+            //Enabeling input when a plane has been detected
+            if (arg.added != null)
             {
                 m_InputManager.m_ThereIsAnActivePlane = true;
-                //ARPlane plane = arg.added[0];                                                               //I'm taking the first plane that has been created
-                //m_BasketManager.PlaceTheBasket(plane.transform.position, plane.transform.rotation);         //Adding a basket at that position
-                //m_IsTheBasketPlaced = true;
-                //ActivateBall();
             }
         }
     }

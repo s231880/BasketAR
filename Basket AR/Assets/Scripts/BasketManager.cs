@@ -29,12 +29,6 @@ namespace BBAR
             m_ActiveBasket.transform.rotation.eulerAngles.Set(90,180, rotation.eulerAngles.z);                      //Rotate it => Temporary due tyo wrong asset transform
         }
 
-        public void MoveTheBasket(Vector3 position)
-        {
-            m_ActiveBasket.transform.position = position;
-            m_ActiveBasket.transform.position += (Vector3.back * 0.1f);
-        }
-
         public void DeleteBasket()
         {
             Destroy(m_ActiveBasket);
