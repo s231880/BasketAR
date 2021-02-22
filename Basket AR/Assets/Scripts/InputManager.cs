@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
 using UnityEngine.EventSystems;
+using UnityEngine.Android;
 
 /// <summary>
 /// Sorry man, I'm become kind of code Nazi, if i see messy things I get mad
@@ -41,7 +42,7 @@ namespace BBAR
         private void UpdatePlacementPose()
         {
 
-//#if !UNITY_EDITOR
+#if !UNITY_EDITOR
             if(m_ThereIsAnActivePlane)
             {
                if (Input.touchCount > 0)
@@ -58,7 +59,7 @@ namespace BBAR
                     OnTouchEnded(touch.position);
                }  
             }
-//#else
+#else
             if (true == Input.GetMouseButtonDown(0))
             {
                 OnTouchBegan(Input.mousePosition);
@@ -71,10 +72,10 @@ namespace BBAR
             {
                 OnTouchEnded(Input.mousePosition);
             }
-//#endif
+#endif
         }
 
-        private void OnTouchBegan(Vector2 touchPosition)
+        private void OnTouchBegan(Vector3 touchPosition)
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
@@ -100,7 +101,7 @@ namespace BBAR
             }
         }
 
-        private void OnTouchMoved(Vector2 touchPosition)
+        private void OnTouchMoved(Vector3 touchPosition)
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch In Progress");
             m_TouchPosition = touchPosition;
@@ -124,7 +125,7 @@ namespace BBAR
             }
         }
 
-        private void OnTouchEnded(Vector2 touchPosition)
+        private void OnTouchEnded(Vector3 touchPosition)
         {
             m_TouchPosition = touchPosition;
             GameManager.Instance.m_UIManager.SetLabelTest("Touch Ended");

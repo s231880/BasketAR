@@ -67,7 +67,7 @@ namespace BBAR
             CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
 
-            m_IsTheBasketPlaced = true;
+            //m_IsTheBasketPlaced = true;
             //m_UIManager.SetLabelTest("Game Manager is Awake");
         }
 
