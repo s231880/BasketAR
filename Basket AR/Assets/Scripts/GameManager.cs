@@ -27,7 +27,7 @@ namespace BBAR
         public GameObject m_ActiveBall;
 
         public bool m_IsTheBasketPlaced = false;
-
+        private int m_Score;
         //-----------------------------------------------------------------------
         //AR variables
 
@@ -66,7 +66,7 @@ namespace BBAR
             GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
-
+            m_Score = 0;
             //m_IsTheBasketPlaced = true;
             //m_UIManager.SetLabelTest("Game Manager is Awake");
         }
@@ -144,6 +144,13 @@ namespace BBAR
                 m_InputManager.m_ThereIsAnActivePlane = true;
             }
         }
+
+        public void UserScored()
+        {
+            Debug.LogError("User Score a Point");
+            ++m_Score;
+            m_UIManager.SetScore(m_Score);
+    }
     }
 }
 

@@ -7,7 +7,7 @@ namespace BBAR
 {
     public class UIManager : MonoBehaviour
     {
-       private int m_Score = 0;
+       
         //For testing purpose only
        [SerializeField]private TextMeshProUGUI m_MessageLabel; 
 
@@ -24,7 +24,7 @@ namespace BBAR
 
         public void SetScore(int score)
         {
-            m_Score = score;
+            Debug.LogError($"{score}  SetScore");
         }
 
         public void SetLabelTest(string message)

@@ -29,7 +29,7 @@ namespace BBAR
             for (int i = 0; i < COUNT; ++i)
             {
                 var obj = Object.Instantiate(cachedObj);
-                obj.name = cachedObj.name + i;
+                obj.name = cachedObj.name;
                 //obj.transform.localScale = new Vector3(1, 1, 1);
                 obj.transform.SetParent(m_PoolTransform);
                 obj.SetActive(false);
