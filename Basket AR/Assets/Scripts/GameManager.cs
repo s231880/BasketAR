@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+#if PLATFORM_ANDROID
+using UnityEngine.Android;
+#endif
+
 namespace BBAR
 {    
      ///<summary>
@@ -27,6 +31,7 @@ namespace BBAR
         public GameObject m_ActiveBall;
 
         public bool m_IsTheBasketPlaced = false;
+        GameObject dialog = null;
 
         //-----------------------------------------------------------------------
         //AR variables
@@ -51,6 +56,14 @@ namespace BBAR
             //Variables & Managers Initialisation
             Instance = this;
 
+#if PLATFORM_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+            {
+            Permission.RequestUserPermission(Permission.Camera);
+            dialog = new GameObject();
+            }
+#endif
+
             m_UIManager = this.gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
 
@@ -67,7 +80,7 @@ namespace BBAR
             CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
 
-            m_IsTheBasketPlaced = true;
+            //m_IsTheBasketPlaced = true;
             //m_UIManager.SetLabelTest("Game Manager is Awake");
         }
 
@@ -144,6 +157,28 @@ namespace BBAR
                 m_InputManager.m_ThereIsAnActivePlane = true;
             }
         }
+
+        void OnGUI()
+        {
+    #if PLATFORM_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+            {
+                // The user denied permission to use the microphone.
+                // Display a message explaining why you need it with Yes/No buttons.
+                // If the user says yes then present the request again
+                // Display a dialog here.
+                dialog.AddComponent<PermissionsRationaleDialog>();
+                return;
+            }
+            else if (dialog != null)
+            {
+                Destroy(dialog);
+            }
+    #endif
+
+            // Now you can do things with the microphone
+        }
     }
 }
+
 
