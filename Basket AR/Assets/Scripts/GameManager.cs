@@ -27,7 +27,7 @@ namespace BBAR
         public GameObject m_ActiveBall;
 
         public bool m_IsTheBasketPlaced = false;
-        private int m_Score;
+        private int m_Score = 0;
         //-----------------------------------------------------------------------
         //AR variables
 
@@ -51,24 +51,23 @@ namespace BBAR
             //Variables & Managers Initialisation
             Instance = this;
 
-            m_UIManager = this.gameObject.AddComponent<UIManager>();
+            m_UIManager = gameObject.transform.Find("UIManager").gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
 
-            m_InputManager = this.gameObject.transform.Find("AR Session Origin").gameObject.AddComponent<InputManager>();
+            m_InputManager = gameObject.transform.Find("AR Session Origin").gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
 
-            m_BasketManager = this.gameObject.AddComponent<BasketManager>();
+            m_BasketManager = gameObject.AddComponent<BasketManager>();
             m_BasketManager.Initialise();
 
             ARVariablesInitialisation();
             //-----------------------------------------------------------------------
             //Obj Pool creation 
-            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
+            GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
             CreateObjPool(ball);                                   // Create the pool
             m_State = GameState.Started;                           // Start the game
-            m_Score = 0;
-            //m_IsTheBasketPlaced = true;
-            //m_UIManager.SetLabelTest("Game Manager is Awake");
+
+            m_UIManager.SetScore(m_Score);
         }
 
         private void ARVariablesInitialisation()
@@ -92,6 +91,7 @@ namespace BBAR
             switch (m_State)
             {
                 case GameState.Started: // The UI menu should is showned
+                    //m_UIManager.ShowStartScreen();
                     break;
                 case GameState.Playing: // Actual game starts and the user is playing
                     break;
@@ -144,11 +144,10 @@ namespace BBAR
                 m_InputManager.m_ThereIsAnActivePlane = true;
             }
         }
-
+        //-----------------------------------------------------------------------
         public void UserScored()
         {
-            Debug.LogError("User Score a Point");
-            ++m_Score;
+            m_Score+=1;
             m_UIManager.SetScore(m_Score);
     }
     }

@@ -9,6 +9,7 @@ namespace BBAR
         private Vector3 m_StartCollionPosition;
         private Vector3 m_FinalCollisionPosition;
 
+
         private void OnTriggerEnter(Collider other)
         {
             if(other.gameObject.name == "Ball")
@@ -24,14 +25,13 @@ namespace BBAR
                 m_FinalCollisionPosition = other.gameObject.transform.position;
                 CheckIfTheUserScoredAPoint();
             }
+            m_StartCollionPosition = m_FinalCollisionPosition = Vector3.zero;
         }
 
         private void CheckIfTheUserScoredAPoint()
         {
             if (m_FinalCollisionPosition.y < m_StartCollionPosition.y)
                 GameManager.Instance.UserScored();
-
-            m_StartCollionPosition = m_FinalCollisionPosition = Vector3.zero;
         }
     }
 }

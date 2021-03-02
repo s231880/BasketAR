@@ -11,13 +11,14 @@ namespace BBAR
 
         public void Initialise()
         {
-            m_BasketPrefab = Resources.Load<GameObject>("Basket");                                      // Loading the basket prefab
-            m_BasketPrefab.transform.Find("ScoreArea").gameObject.AddComponent<ScoreAreaManager>();
+            m_BasketPrefab = Resources.Load<GameObject>("Basket");
         }
 
         public void PlaceTheBasket(Vector3 position, Quaternion rotation)
         {
             m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab , position, m_BasketPrefab.transform.rotation);       //Instantiate the basket
+            m_ActiveBasket.transform.LookAt(Camera.main.transform);
+            m_ActiveBasket.transform.SetParent(this.transform);
         }
 
         public void DeleteBasket()
