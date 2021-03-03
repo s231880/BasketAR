@@ -2,6 +2,10 @@ using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+#if PLATFORM_ANDROID
+using UnityEngine.Android;
+#endif
+
 namespace BBAR
 {    
      ///<summary>
@@ -27,6 +31,7 @@ namespace BBAR
         public GameObject m_ActiveBall;
 
         public bool m_IsTheBasketPlaced = false;
+        GameObject dialog = null;
         private int m_Score = 0;
         //-----------------------------------------------------------------------
         //AR variables
@@ -51,6 +56,14 @@ namespace BBAR
             //Variables & Managers Initialisation
             Instance = this;
 
+
+#if PLATFORM_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+            {
+            Permission.RequestUserPermission(Permission.Camera);
+            dialog = new GameObject();
+            }
+#endif
             m_UIManager = gameObject.transform.Find("UIManager").gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
 
@@ -67,7 +80,11 @@ namespace BBAR
             CreateObjPool(ball);                                        // Create the pool
             m_State = GameState.Started;                                // Start the game
 
+            //m_IsTheBasketPlaced = true;
+            //m_UIManager.SetLabelTest("Game Manager is Awake");
+
             m_UIManager.SetScore(m_Score);
+
         }
 
         private void ARVariablesInitialisation()
@@ -118,7 +135,7 @@ namespace BBAR
         {
             float differenceY = (startingPos.y - finalPos.y) / Screen.height * 100;
 
-            float throwSpeed = 2f; //Random value
+            float throwSpeed = 3f; //Random value
             // I think we should use as speed the difference between when the user has pressed the screen and when has release it
             float speed = throwSpeed * differenceY;
 
@@ -126,7 +143,7 @@ namespace BBAR
 
             x = Mathf.Abs(Input.mousePosition.x - finalPos.x) / Screen.width * 100 * x;
 
-            Vector3 direction = new Vector3(x, 0f, 1f);
+            Vector3 direction = new Vector3(x, 0f, -1f);
             direction = Camera.main.transform.TransformDirection(direction);
             //Vector3 direction = finalPos - startingPos;
 
@@ -144,12 +161,37 @@ namespace BBAR
                 m_InputManager.m_ThereIsAnActivePlane = true;
             }
         }
+
+
+        void OnGUI()
+        {
+    #if PLATFORM_ANDROID
+            if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
+            {
+                // The user denied permission to use the microphone.
+                // Display a message explaining why you need it with Yes/No buttons.
+                // If the user says yes then present the request again
+                // Display a dialog here.
+                dialog.AddComponent<PermissionsRationaleDialog>();
+                return;
+            }
+            else if (dialog != null)
+            {
+                Destroy(dialog);
+            }
+    #endif
+
+            // Now you can do things with the microphone
+        }
+
         //-----------------------------------------------------------------------
         public void UserScored()
         {
             m_Score+=1;
             m_UIManager.SetScore(m_Score);
-    }
+        }
+
     }
 }
+
 

@@ -17,7 +17,7 @@ namespace BBAR
         public void ApplyForce(Vector3 direction, float speed)
         {
             m_RigidBody.useGravity = true;
-            m_RigidBody.AddForce((direction * speed / 2f) + (Vector3.up * speed));
+            m_RigidBody.AddForce((direction * speed / 2f) + (Vector3.up * speed * -1));
 
             Invoke("ResetBall", 3.0f);
         }
