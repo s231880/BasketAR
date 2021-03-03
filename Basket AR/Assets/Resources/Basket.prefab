@@ -68,6 +68,7 @@ GameObject:
   - component: {fileID: 6923838280451884034}
   - component: {fileID: 4165574894426111194}
   - component: {fileID: 583587936402665783}
+  - component: {fileID: 4161455702162676888}
   m_Layer: 0
   m_Name: Basket
   m_TagString: Untagged
@@ -139,3 +140,17 @@ MeshRenderer:
   m_SortingLayer: 0
   m_SortingOrder: 0
   m_AdditionalVertexStreams: {fileID: 0}
+--- !u!64 &4161455702162676888
+MeshCollider:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 5648196519132486571}
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_Enabled: 1
+  serializedVersion: 4
+  m_Convex: 0
+  m_CookingOptions: 30
+  m_Mesh: {fileID: 5875679539872350956, guid: 87e02158b38e74642a1ae90fd416b73a, type: 3}

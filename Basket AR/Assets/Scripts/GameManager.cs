@@ -64,8 +64,8 @@ namespace BBAR
             //-----------------------------------------------------------------------
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
-            CreateObjPool(ball);                                   // Create the pool
-            m_State = GameState.Started;                           // Start the game
+            CreateObjPool(ball);                                        // Create the pool
+            m_State = GameState.Started;                                // Start the game
 
             m_UIManager.SetScore(m_Score);
         }
