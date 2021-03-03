@@ -7,14 +7,16 @@ namespace BBAR
 {
     public class UIManager : MonoBehaviour
     {
-       private int m_Score = 0;
+       
         //For testing purpose only
-       [SerializeField]private TextMeshProUGUI m_MessageLabel; 
+       private TextMeshProUGUI m_MessageLabel; 
+       private TextMeshProUGUI m_ScoreLabel; 
 
        public void Initialise()
        {
-            m_MessageLabel = this.transform.Find("CanvasMessage").GetComponentInChildren<TextMeshProUGUI>();
-       }
+            m_MessageLabel = this.transform.Find("DebugMessage").GetComponent<TextMeshProUGUI>();
+            m_ScoreLabel = this.transform.Find("ScoreLabel").GetComponent<TextMeshProUGUI>();
+        }
 
         public void ShowStartScreen(bool state) { }
 
@@ -24,7 +26,7 @@ namespace BBAR
 
         public void SetScore(int score)
         {
-            m_Score = score;
+            m_ScoreLabel.text = $"{score}";
         }
 
         public void SetLabelTest(string message)

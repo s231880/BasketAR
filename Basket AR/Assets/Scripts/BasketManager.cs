@@ -8,25 +8,17 @@ namespace BBAR
     {
         private GameObject m_BasketPrefab;
         private GameObject m_ActiveBasket;
-        private const float BASKET_HEIGHT = 1.2f;                       //Temporary value
 
         public void Initialise()
         {
-            m_BasketPrefab = Resources.Load<GameObject>("Basket");       // Loading the basket prefab
-        }
-
-        // Update is called once per frame
-        void Update()
-        {
-
+            m_BasketPrefab = Resources.Load<GameObject>("Basket");
         }
 
         public void PlaceTheBasket(Vector3 position, Quaternion rotation)
         {
-            Vector3 pos = position;
-            pos.y = BASKET_HEIGHT;
-            m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab , pos, m_BasketPrefab.transform.rotation);       //Instantiate the basket
-            m_ActiveBasket.transform.rotation.eulerAngles.Set(90,180, rotation.eulerAngles.z);                      //Rotate it => Temporary due tyo wrong asset transform
+            m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab , position, m_BasketPrefab.transform.rotation);       //Instantiate the basket
+            m_ActiveBasket.transform.LookAt(Camera.main.transform);
+            m_ActiveBasket.transform.SetParent(this.transform);
         }
 
         public void DeleteBasket()

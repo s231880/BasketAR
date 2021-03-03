@@ -32,7 +32,7 @@ namespace BBAR
 
         public bool m_IsTheBasketPlaced = false;
         GameObject dialog = null;
-
+        private int m_Score = 0;
         //-----------------------------------------------------------------------
         //AR variables
 
@@ -56,6 +56,7 @@ namespace BBAR
             //Variables & Managers Initialisation
             Instance = this;
 
+
 #if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
             {
@@ -63,25 +64,27 @@ namespace BBAR
             dialog = new GameObject();
             }
 #endif
-
-            m_UIManager = this.gameObject.AddComponent<UIManager>();
+            m_UIManager = gameObject.transform.Find("UIManager").gameObject.AddComponent<UIManager>();
             m_UIManager.Initialise();
 
-            m_InputManager = this.gameObject.transform.Find("AR Session Origin").gameObject.AddComponent<InputManager>();
+            m_InputManager = gameObject.transform.Find("AR Session Origin").gameObject.AddComponent<InputManager>();
             m_InputManager.Initialise();
 
-            m_BasketManager = this.gameObject.AddComponent<BasketManager>();
+            m_BasketManager = gameObject.AddComponent<BasketManager>();
             m_BasketManager.Initialise();
 
             ARVariablesInitialisation();
             //-----------------------------------------------------------------------
             //Obj Pool creation 
-            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
-            CreateObjPool(ball);                                   // Create the pool
-            m_State = GameState.Started;                           // Start the game
+            GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
+            CreateObjPool(ball);                                        // Create the pool
+            m_State = GameState.Started;                                // Start the game
 
             //m_IsTheBasketPlaced = true;
             //m_UIManager.SetLabelTest("Game Manager is Awake");
+
+            m_UIManager.SetScore(m_Score);
+
         }
 
         private void ARVariablesInitialisation()
@@ -105,6 +108,7 @@ namespace BBAR
             switch (m_State)
             {
                 case GameState.Started: // The UI menu should is showned
+                    //m_UIManager.ShowStartScreen();
                     break;
                 case GameState.Playing: // Actual game starts and the user is playing
                     break;
@@ -158,6 +162,7 @@ namespace BBAR
             }
         }
 
+
         void OnGUI()
         {
     #if PLATFORM_ANDROID
@@ -178,6 +183,14 @@ namespace BBAR
 
             // Now you can do things with the microphone
         }
+
+        //-----------------------------------------------------------------------
+        public void UserScored()
+        {
+            m_Score+=1;
+            m_UIManager.SetScore(m_Score);
+        }
+
     }
 }
 
