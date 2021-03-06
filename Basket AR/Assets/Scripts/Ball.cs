@@ -8,10 +8,12 @@ namespace BBAR
     public class Ball : MonoBehaviour
     {
         private Rigidbody m_RigidBody;
+        private ParticleSystem m_Fire;
 
         private void Awake()
         {
             m_RigidBody = GetComponent<Rigidbody>();
+            m_Fire = gameObject.GetComponentInChildren<ParticleSystem>();
         }
 
         public void ApplyForce(Vector3 direction, float speed)
@@ -30,6 +32,14 @@ namespace BBAR
             gameObject.transform.rotation = Quaternion.Euler(0f, 200f, 0f);
             gameObject.transform.position = Vector3.zero;
             GameManager.Instance.ReturnBallTothePool(gameObject);
+        }
+
+        public void EnableFire(bool state)
+        {
+            if (state)
+                m_Fire.Play();
+            else
+                m_Fire.Stop();
         }
     }
 }
