@@ -60,8 +60,8 @@ namespace BBAR
 #if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
             {
-            Permission.RequestUserPermission(Permission.Camera);
-            dialog = new GameObject();
+                Permission.RequestUserPermission(Permission.Camera);
+                dialog = new GameObject();
             }
 #endif
             m_UIManager = gameObject.transform.Find("UIManager").gameObject.AddComponent<UIManager>();
@@ -122,7 +122,8 @@ namespace BBAR
         public void ActivateBall()
         {
             m_ActiveBall = m_Pool.GetObject();
-            m_ActiveBall.transform.position = Camera.main.transform.position + Camera.main.transform.forward; 
+            m_ActiveBall.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * 2.5f);
+            m_ActiveBall.transform.position -= (m_ActiveBall.transform.up * 0.5f);
         }
 
         public void ReturnBallTothePool(GameObject thrownBall)
@@ -165,7 +166,7 @@ namespace BBAR
 
         void OnGUI()
         {
-    #if PLATFORM_ANDROID
+#if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
             {
                 // The user denied permission to use the microphone.
@@ -179,7 +180,7 @@ namespace BBAR
             {
                 Destroy(dialog);
             }
-    #endif
+#endif
 
             // Now you can do things with the microphone
         }
