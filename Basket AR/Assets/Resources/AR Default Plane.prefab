@@ -69,7 +69,7 @@ MeshCollider:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 8791364318219556175}
-  m_Material: {fileID: 0}
+  m_Material: {fileID: 13400000, guid: d9130068131a0034b916f0f1f142f3b2, type: 2}
   m_IsTrigger: 0
   m_Enabled: 1
   serializedVersion: 4
@@ -92,7 +92,7 @@ MeshRenderer:
   m_ReflectionProbeUsage: 1
   m_RayTracingMode: 2
   m_RayTraceProcedural: 0
-  m_RenderingLayerMask: 1
+  m_RenderingLayerMask: 32769
   m_RendererPriority: 0
   m_Materials:
   - {fileID: 2100000, guid: 44d9a0f4a63f6c04da024e12023249e9, type: 2}
@@ -156,7 +156,7 @@ LineRenderer:
   m_LightmapParameters: {fileID: 0}
   m_SortingLayerID: 0
   m_SortingLayer: 0
-  m_SortingOrder: 0
+  m_SortingOrder: -6
   m_Positions:
   - {x: 0, y: 0, z: 0}
   - {x: 0, y: 0, z: 1}
