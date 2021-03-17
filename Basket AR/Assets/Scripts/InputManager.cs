@@ -1,9 +1,6 @@
-using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
-using UnityEngine.EventSystems;
-using UnityEngine.Android;
 
 /// <summary>
 /// Sorry man, I'm become kind of code Nazi, if i see messy things I get mad
@@ -15,11 +12,12 @@ namespace BBAR
         private Vector2 m_StartingPosition, m_FinalPosition;
         public bool m_ThereIsAnActivePlane = false;
         private bool m_HoldingTouch = false;
-        [SerializeField]private static int LAYER_BALL;
+        [SerializeField] private static int LAYER_BALL;
 
         //-----------------------------------------------------------------------
         //AR variables
         private Pose m_PlacementPose;
+
         private Vector2 m_TouchPosition = default;
         private ARRaycastManager m_RayCastManager;
         private Camera m_ARCamera;
@@ -27,7 +25,9 @@ namespace BBAR
 
         //-----------------------------------------------------------------------
         private GameObject m_BasketPositionCursorPrefab;
+
         private GameObject m_BasketCursor;
+
         public void Initialise()
         {
             m_RayCastManager = gameObject.GetComponent<ARRaycastManager>();
@@ -35,14 +35,14 @@ namespace BBAR
             m_BasketPositionCursorPrefab = Resources.Load<GameObject>("BasketPositionCursor");
             LAYER_BALL = LayerMask.NameToLayer("Ball");
         }
-        void Update()
+
+        private void Update()
         {
             UpdatePlacementPose();
         }
 
         private void UpdatePlacementPose()
         {
-
 #if !UNITY_EDITOR
             if(m_ThereIsAnActivePlane && GameManager.Instance.m_state != GameState.Ended)
             {
@@ -52,13 +52,11 @@ namespace BBAR
 
                 if (touch.phase == TouchPhase.Began)
                     OnTouchBegan(touch.position);
-
                 else if (touch.phase == TouchPhase.Moved)
                     OnTouchMoved(touch.position);
-
                 else if (touch.phase == TouchPhase.Ended)
                     OnTouchEnded(touch.position);
-               }  
+               }
             }
 #else
             if (GameManager.Instance.m_state != GameState.Ended)
@@ -83,7 +81,7 @@ namespace BBAR
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
-            
+
             if (GameManager.Instance.m_state == GameState.Started)              //If the basket hasn't been placed yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
@@ -92,14 +90,13 @@ namespace BBAR
                 }
             }
             //Else throw the ball or do all the rest
-            else if(GameManager.Instance.m_state == GameState.Playing)
+            else if (GameManager.Instance.m_state == GameState.Playing)
             {
                 if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
                     m_StartingPosition = m_TouchPosition;
                     m_HoldingTouch = true;
                 }
-
             }
         }
 
@@ -121,7 +118,7 @@ namespace BBAR
                 //m_LastMouseY = touchPosition.y;
 
                 //Not sure why you want this man, the ball should move only when the the user release the touch
-                
+
                 //GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
             }
         }
@@ -141,14 +138,13 @@ namespace BBAR
                     Destroy(m_BasketCursor);
                 }
             }
-            else if(GameManager.Instance.m_state == GameState.Playing)                                                           //Throwing the ball
+            else if (GameManager.Instance.m_state == GameState.Playing)                                                           //Throwing the ball
             {
                 if (m_StartingPosition.y < m_TouchPosition.y)
                 {
                     m_FinalPosition = m_TouchPosition;
                     GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition);  //Throw the ball
                     GameManager.Instance.ActivateBall();                                        //Active a new ball
-
                 }
                 else
                 {
@@ -157,6 +153,7 @@ namespace BBAR
                 m_HoldingTouch = false;
             }
         }
+
         //-----------------------------------------------------------------------
         //Raycast functions
 
@@ -187,7 +184,6 @@ namespace BBAR
             {
                 if (hit.collider.gameObject.layer == LAYER_BALL)  //I'll do this check with the collision instead of the pos because I'm afraid that this could cause errors
                 {
-                    Debug.LogError("KAYERBALL");
                     return true;
                 }
                 else
@@ -195,12 +191,14 @@ namespace BBAR
             }
             return false;
         }
+
         //-----------------------------------------------------------------------
         private void ResetVariables()
         {
             m_StartingPosition = Vector2.zero;
             m_FinalPosition = Vector2.zero;
         }
+
         //-----------------------------------------------------------------------
     }
 }

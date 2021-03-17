@@ -1,5 +1,3 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BBAR
@@ -9,10 +7,9 @@ namespace BBAR
         private Vector3 m_StartCollionPosition;
         private Vector3 m_FinalCollisionPosition;
 
-
         private void OnTriggerEnter(Collider other)
         {
-            if(other.gameObject.name == "Ball")
+            if (other.gameObject.name == "Ball")
             {
                 m_StartCollionPosition = other.gameObject.transform.position;
             }
@@ -35,4 +32,3 @@ namespace BBAR
         }
     }
 }
-

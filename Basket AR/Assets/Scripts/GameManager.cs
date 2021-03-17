@@ -1,21 +1,25 @@
 using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 using UnityEngine.XR.ARFoundation;
+using System.Collections.Generic;
+
 #if PLATFORM_ANDROID
+
 using UnityEngine.Android;
+
 #endif
 
 namespace BBAR
-{    
-     ///<summary>
-     /// The GameState enum will keep track of the state of the game, and will inform the manager when the state is changed
-     /// </summary>
+{
+    ///<summary>
+    /// The GameState enum will keep track of the state of the game, and will inform the manager when the state is changed
+    /// </summary>
     public enum GameState
     {
-        Started, // => Prepare to the game, activate 
+        Started, // => Prepare to the game, activate
         Playing,
-        Ended
+        Ended,
+        Exit
     }
 
     public class GameManager : MonoBehaviour
@@ -23,6 +27,7 @@ namespace BBAR
         //-----------------------------------------------------------------------
         //Application variables
         public static GameManager Instance;
+
         public UIManager m_UIManager;
         private InputManager m_InputManager;
         private BasketManager m_BasketManager;
@@ -31,17 +36,19 @@ namespace BBAR
         private ObjectPool m_BallsPool = new ObjectPool();
         public GameObject m_ActiveBall;
 
-        GameObject dialog = null;
+        private GameObject dialog = null;
         private static int m_Score = 0;
         private static int m_Timer;
-        private const int FULL_TIMER = 30;
+        private const int FULL_TIMER = 10; //60
+
+        private Dictionary<string, ParticleSystem> m_ConfettiDictionary = new Dictionary<string, ParticleSystem>();
         //-----------------------------------------------------------------------
         //AR variables
 
         private ARPlaneManager m_PlaneManager;
 
-
         private GameState m_State;
+
         public GameState m_state
         {
             get { return m_State; }
@@ -52,12 +59,11 @@ namespace BBAR
             }
         }
 
-        void Awake()
+        private void Awake()
         {
             //-----------------------------------------------------------------------
             //Variables & Managers Initialisation
             Instance = this;
-
 
 #if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
@@ -77,9 +83,10 @@ namespace BBAR
 
             ARVariablesInitialisation();
             //-----------------------------------------------------------------------
-            //Obj Pool creation 
+            //Obj Pool creation
             GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
             CreateObjPool(ball);                                        // Create the pool
+            InitialiseConfetti();
             m_state = GameState.Started;                                // Start the game
         }
 
@@ -92,8 +99,8 @@ namespace BBAR
 
         private void CreateObjPool(GameObject ball)
         {
-            GameObject ballsPool = new GameObject("BallsPool");    // Pool transform creation
-            ballsPool.transform.SetParent(this.transform);         // Setting this gameobject as parent of the pool
+            GameObject ballsPool = new GameObject("BallsPool");         // Pool transform creation
+            ballsPool.transform.SetParent(this.transform);              // Setting this gameobject as parent of the pool
             m_BallsPool.CreatePool(ball, ballsPool.transform);          // Initialise the pool
         }
 
@@ -102,7 +109,13 @@ namespace BBAR
             m_BasketManager.PlaceTheBasket(position, rotation);
             m_BasketBeenPlaced = true;
             m_state = GameState.Playing;
-            Debug.LogError("PlaceTheBasket");
+        }
+
+        private void InitialiseConfetti()
+        {
+            GameObject confetti = Camera.main.gameObject.transform.Find("ConfettiParticleSystems").gameObject;
+            foreach(Transform system in confetti.transform)
+                m_ConfettiDictionary.Add(system.name,system.gameObject.GetComponent<ParticleSystem>());
         }
 
         //-----------------------------------------------------------------------
@@ -112,22 +125,28 @@ namespace BBAR
             switch (m_State)
             {
                 case GameState.Started:                     // The UI menu should is showned
-                    //m_UIManager.ShowStartScreen();
+                    StartCoroutine(m_UIManager.ShowStartScreen());
                     break;
+
                 case GameState.Playing:                     //The basket has been placed, the game can start
-                    Debug.LogError("PLAYING");
                     ResetScoreAndTimer();                   //Set timer and score
                     StartCoroutine(Startimer());            //Starts the timer
                     ActivateBall();                         //Activate the first ball
                     m_BasketManager.EnableScoreArea(true);  //Enable the score area
                     break;
+
                 case GameState.Ended:   // The game is ended, the user has to decide between play again and go fuck himself
-                    m_BasketManager.EnableScoreArea(false);  
+                    PlayConfetti();
+                    m_BasketManager.EnableScoreArea(false);
                     m_UIManager.ShowEndScreen(true);
                     break;
 
+                case GameState.Exit:
+                    CloseApplication();
+                    break;
             }
         }
+
         //-----------------------------------------------------------------------
         //Getting and returning ball to the pool => Probably these functions should be moved into Ball.cs, what do you think Brad?
         public void ActivateBall()
@@ -141,6 +160,7 @@ namespace BBAR
         {
             m_BallsPool.ReturnObject(thrownBall);
         }
+
         //-----------------------------------------------------------------------
         //Throw the ball
         public void ThrowActiveBall(Vector2 startingPos, Vector2 finalPos)
@@ -160,8 +180,8 @@ namespace BBAR
             //Vector3 direction = finalPos - startingPos;
 
             m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed);
-
         }
+
         //-----------------------------------------------------------------------
         //Function that detects when plane state change => the state can be: Added, Updated, Removed
         //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
@@ -173,7 +193,8 @@ namespace BBAR
                 m_InputManager.m_ThereIsAnActivePlane = true;
             }
         }
-        void OnGUI()
+
+        private void OnGUI()
         {
 #if PLATFORM_ANDROID
             if (!Permission.HasUserAuthorizedPermission(Permission.Camera))
@@ -211,20 +232,39 @@ namespace BBAR
                 yield return new WaitForSeconds(1);
             }
 
-            m_state = GameState.Ended; 
+            m_state = GameState.Ended;
         }
 
         private void ResetScoreAndTimer()
         {
-            Debug.LogError("ResetScoreAndTimer");
             m_Score = 0;
             m_UIManager.SetScore(m_Score);
 
             m_Timer = FULL_TIMER;
             m_UIManager.SetTimer(m_Timer);
         }
+
         //-----------------------------------------------------------------------
+
+        public void ReadyToPlay()
+        {
+            if (!m_BasketBeenPlaced)
+            {
+
+            }
+            m_state = GameState.Playing;
+        }
+
+        private void CloseApplication()
+        {
+            Application.Quit();
+        }
+
+        //-----------------------------------------------------------------------
+        private void PlayConfetti()
+        {
+            foreach (string key in m_ConfettiDictionary.Keys)
+                m_ConfettiDictionary[key].Play();
+        }
     }
 }
-
-
