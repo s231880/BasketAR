@@ -1,12 +1,10 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 /// <summary>
 /// The obj pool is a child of the Transform parent passed into the CreatePool function.
 /// It's divided in two transform, in the first one there are the disabled ball (m_PoolTransform), in the second one the
 /// active one (m_ActiveObjTransform). Once a ball is active it;s changed of parent, and then it goes back once disabled.
-/// The value of COUNT it is just a random number that looked reasonable to me, but we could change it in future 
+/// The value of COUNT it is just a random number that looked reasonable to me, but we could change it in future
 /// </summary>
 
 namespace BBAR
@@ -17,7 +15,7 @@ namespace BBAR
         private Transform m_ActiveObjTransform;
         private Transform m_PoolTransform;
 
-        public void CreatePool(GameObject cachedObj, Transform  parent)
+        public void CreatePool(GameObject cachedObj, Transform parent)
         {
             GameObject pool = new GameObject("Pool");
             GameObject activePool = new GameObject("ActivePool");
@@ -35,7 +33,7 @@ namespace BBAR
                 obj.SetActive(false);
             }
         }
-        
+
         public GameObject GetObject()
         {
             if (m_PoolTransform.childCount != 0)
@@ -50,7 +48,6 @@ namespace BBAR
                 Debug.LogError("The pool is empty!");
                 return null;
             }
-                
         }
 
         public void ReturnObject(GameObject obj)
