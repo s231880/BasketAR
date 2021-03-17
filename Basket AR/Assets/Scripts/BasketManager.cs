@@ -8,6 +8,7 @@ namespace BBAR
     {
         private GameObject m_BasketPrefab;
         private GameObject m_ActiveBasket;
+        private BoxCollider m_ScoreArea;
 
         public void Initialise()
         {
@@ -19,12 +20,18 @@ namespace BBAR
             m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab , position, m_BasketPrefab.transform.rotation);       //Instantiate the basket
             m_ActiveBasket.transform.LookAt(Camera.main.transform);
             m_ActiveBasket.transform.SetParent(this.transform);
+            m_ScoreArea = m_ActiveBasket.GetComponentInChildren<BoxCollider>();
         }
 
         public void DeleteBasket()
         {
             Destroy(m_ActiveBasket);
             m_ActiveBasket = null;
+        }
+
+        public void EnableScoreArea(bool state)
+        {
+            m_ScoreArea.enabled = state;
         }
     }
 }

@@ -25,19 +25,21 @@ namespace BBAR
         public static GameManager Instance;
         public UIManager m_UIManager;
         private InputManager m_InputManager;
-        public BasketManager m_BasketManager;
+        private BasketManager m_BasketManager;
 
-        private ObjectPool m_Pool = new ObjectPool();
+        private bool m_BasketBeenPlaced = false;
+        private ObjectPool m_BallsPool = new ObjectPool();
         public GameObject m_ActiveBall;
 
-        public bool m_IsTheBasketPlaced = false;
         GameObject dialog = null;
-        private int m_Score = 0;
+        private static int m_Score = 0;
+        private static int m_Timer;
+        private const int FULL_TIMER = 30;
         //-----------------------------------------------------------------------
         //AR variables
 
         private ARPlaneManager m_PlaneManager;
-        
+
 
         private GameState m_State;
         public GameState m_state
@@ -78,13 +80,7 @@ namespace BBAR
             //Obj Pool creation 
             GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
             CreateObjPool(ball);                                        // Create the pool
-            m_State = GameState.Started;                                // Start the game
-
-            //m_IsTheBasketPlaced = true;
-            //m_UIManager.SetLabelTest("Game Manager is Awake");
-
-            m_UIManager.SetScore(m_Score);
-
+            m_state = GameState.Started;                                // Start the game
         }
 
         private void ARVariablesInitialisation()
@@ -98,7 +94,15 @@ namespace BBAR
         {
             GameObject ballsPool = new GameObject("BallsPool");    // Pool transform creation
             ballsPool.transform.SetParent(this.transform);         // Setting this gameobject as parent of the pool
-            m_Pool.CreatePool(ball, ballsPool.transform);          // Initialise the pool
+            m_BallsPool.CreatePool(ball, ballsPool.transform);          // Initialise the pool
+        }
+
+        public void PlaceTheBasket(Vector3 position, Quaternion rotation)
+        {
+            m_BasketManager.PlaceTheBasket(position, rotation);
+            m_BasketBeenPlaced = true;
+            m_state = GameState.Playing;
+            Debug.LogError("PlaceTheBasket");
         }
 
         //-----------------------------------------------------------------------
@@ -107,12 +111,19 @@ namespace BBAR
         {
             switch (m_State)
             {
-                case GameState.Started: // The UI menu should is showned
+                case GameState.Started:                     // The UI menu should is showned
                     //m_UIManager.ShowStartScreen();
                     break;
-                case GameState.Playing: // Actual game starts and the user is playing
+                case GameState.Playing:                     //The basket has been placed, the game can start
+                    Debug.LogError("PLAYING");
+                    ResetScoreAndTimer();                   //Set timer and score
+                    StartCoroutine(Startimer());            //Starts the timer
+                    ActivateBall();                         //Activate the first ball
+                    m_BasketManager.EnableScoreArea(true);  //Enable the score area
                     break;
                 case GameState.Ended:   // The game is ended, the user has to decide between play again and go fuck himself
+                    m_BasketManager.EnableScoreArea(false);  
+                    m_UIManager.ShowEndScreen(true);
                     break;
 
             }
@@ -121,14 +132,14 @@ namespace BBAR
         //Getting and returning ball to the pool => Probably these functions should be moved into Ball.cs, what do you think Brad?
         public void ActivateBall()
         {
-            m_ActiveBall = m_Pool.GetObject();
+            m_ActiveBall = m_BallsPool.GetObject();
             m_ActiveBall.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * 2.5f);
             m_ActiveBall.transform.position -= (m_ActiveBall.transform.up * 0.5f);
         }
 
         public void ReturnBallTothePool(GameObject thrownBall)
         {
-            m_Pool.ReturnObject(thrownBall);
+            m_BallsPool.ReturnObject(thrownBall);
         }
         //-----------------------------------------------------------------------
         //Throw the ball
@@ -162,8 +173,6 @@ namespace BBAR
                 m_InputManager.m_ThereIsAnActivePlane = true;
             }
         }
-
-
         void OnGUI()
         {
 #if PLATFORM_ANDROID
@@ -186,12 +195,35 @@ namespace BBAR
         }
 
         //-----------------------------------------------------------------------
-        public void UserScored()
+        //Score and timer functions
+        public void UpdateScored()
         {
-            m_Score+=1;
+            m_Score += 1;
             m_UIManager.SetScore(m_Score);
         }
 
+        private IEnumerator Startimer()
+        {
+            while (m_Timer != 0)
+            {
+                --m_Timer;
+                m_UIManager.SetTimer(m_Timer);
+                yield return new WaitForSeconds(1);
+            }
+
+            m_state = GameState.Ended; 
+        }
+
+        private void ResetScoreAndTimer()
+        {
+            Debug.LogError("ResetScoreAndTimer");
+            m_Score = 0;
+            m_UIManager.SetScore(m_Score);
+
+            m_Timer = FULL_TIMER;
+            m_UIManager.SetTimer(m_Timer);
+        }
+        //-----------------------------------------------------------------------
     }
 }
 

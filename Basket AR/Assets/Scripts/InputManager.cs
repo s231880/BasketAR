@@ -15,6 +15,7 @@ namespace BBAR
         private Vector2 m_StartingPosition, m_FinalPosition;
         public bool m_ThereIsAnActivePlane = false;
         private bool m_HoldingTouch = false;
+        [SerializeField]private static int LAYER_BALL;
 
         //-----------------------------------------------------------------------
         //AR variables
@@ -32,7 +33,7 @@ namespace BBAR
             m_RayCastManager = gameObject.GetComponent<ARRaycastManager>();
             m_ARCamera = this.GetComponentInChildren<Camera>();
             m_BasketPositionCursorPrefab = Resources.Load<GameObject>("BasketPositionCursor");
-            //GameManager.Instance.m_UIManager.SetLabelTest("IM Initted");
+            LAYER_BALL = LayerMask.NameToLayer("Ball");
         }
         void Update()
         {
@@ -43,7 +44,7 @@ namespace BBAR
         {
 
 #if !UNITY_EDITOR
-            if(m_ThereIsAnActivePlane)
+            if(m_ThereIsAnActivePlane && GameManager.Instance.m_state != GameState.Ended)
             {
                if (Input.touchCount > 0)
                {
@@ -60,17 +61,20 @@ namespace BBAR
                }  
             }
 #else
-            if (true == Input.GetMouseButtonDown(0))
+            if (GameManager.Instance.m_state != GameState.Ended)
             {
-                OnTouchBegan(Input.mousePosition);
-            }
-            else if (true == Input.GetMouseButton(0))
-            {
-                OnTouchMoved(Input.mousePosition);
-            }
-            else if (true == Input.GetMouseButtonUp(0))
-            {
-                OnTouchEnded(Input.mousePosition);
+                if (true == Input.GetMouseButtonDown(0))
+                {
+                    OnTouchBegan(Input.mousePosition);
+                }
+                else if (true == Input.GetMouseButton(0))
+                {
+                    OnTouchMoved(Input.mousePosition);
+                }
+                else if (true == Input.GetMouseButtonUp(0))
+                {
+                    OnTouchEnded(Input.mousePosition);
+                }
             }
 #endif
         }
@@ -80,7 +84,7 @@ namespace BBAR
             GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
             
-            if (!GameManager.Instance.m_IsTheBasketPlaced)              //If the basket hasn't been placed yet
+            if (GameManager.Instance.m_state == GameState.Started)              //If the basket hasn't been placed yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -88,14 +92,12 @@ namespace BBAR
                 }
             }
             //Else throw the ball or do all the rest
-            else
+            else if(GameManager.Instance.m_state == GameState.Playing)
             {
                 if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
                     m_StartingPosition = m_TouchPosition;
                     m_HoldingTouch = true;
-                    //The ball schoud be already active is moved into a specific position by the GetObject function into ObjectPool.cs
-                    //GameManager.Instance.m_ActiveBall.transform.SetParent(null);
                 }
 
             }
@@ -105,12 +107,11 @@ namespace BBAR
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch In Progress");
             m_TouchPosition = touchPosition;
-            //Placing the basket
-            if (!GameManager.Instance.m_IsTheBasketPlaced)      
+            if (GameManager.Instance.m_state == GameState.Started)                      //Placing the basket
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
-                    m_BasketCursor.transform.position = m_PlacementPose.position;
+                    m_BasketCursor.transform.position = m_PlacementPose.position;       //Set cursor position
                 }
             }
             //Throwing the ball
@@ -128,29 +129,26 @@ namespace BBAR
         private void OnTouchEnded(Vector3 touchPosition)
         {
             m_TouchPosition = touchPosition;
-            GameManager.Instance.m_UIManager.SetLabelTest("Touch Ended");
-            if (!GameManager.Instance.m_IsTheBasketPlaced)
+            if (GameManager.Instance.m_state == GameState.Started)                //Placing the basket, the game is not started yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
                     Destroy(m_BasketCursor);
-                    GameManager.Instance.m_BasketManager.PlaceTheBasket(m_PlacementPose.position, m_PlacementPose.rotation);    //Place the basket
-                    GameManager.Instance.m_IsTheBasketPlaced = true;
-                    GameManager.Instance.ActivateBall();                                                                        //Activate the first ball
+                    GameManager.Instance.PlaceTheBasket(m_PlacementPose.position, m_PlacementPose.rotation);    //Place the basket
                 }
                 else
                 {
                     Destroy(m_BasketCursor);
                 }
             }
-            else //Throw the ball
+            else if(GameManager.Instance.m_state == GameState.Playing)                                                           //Throwing the ball
             {
                 if (m_StartingPosition.y < m_TouchPosition.y)
                 {
                     m_FinalPosition = m_TouchPosition;
                     GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition);  //Throw the ball
                     GameManager.Instance.ActivateBall();                                        //Active a new ball
-                    
+
                 }
                 else
                 {
@@ -187,8 +185,9 @@ namespace BBAR
             RaycastHit hit;
             if (Physics.Raycast(ray, out hit, 100f))
             {
-                if (hit.transform == GameManager.Instance.m_ActiveBall.transform)  //I'll do this check with the collision instead of the pos because I'm afraid that this could cause errors
+                if (hit.collider.gameObject.layer == LAYER_BALL)  //I'll do this check with the collision instead of the pos because I'm afraid that this could cause errors
                 {
+                    Debug.LogError("KAYERBALL");
                     return true;
                 }
                 else
