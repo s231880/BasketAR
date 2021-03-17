@@ -31,7 +31,7 @@ namespace BBAR
         private void CheckIfTheUserScoredAPoint()
         {
             if (m_FinalCollisionPosition.y < m_StartCollionPosition.y)
-                GameManager.Instance.UserScored();
+                GameManager.Instance.UpdateScored();
         }
     }
 }
