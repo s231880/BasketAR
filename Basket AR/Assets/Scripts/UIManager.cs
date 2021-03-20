@@ -20,6 +20,17 @@ namespace BBAR
         private CanvasGroup m_StartScreen;
         private Button m_PlayBtn;
         private Button m_ExitBtn;
+        //-----------------------------------------------------------------------
+        //EndScreen variables
+        private CanvasGroup m_EndMenu;
+        private Button m_RestartBtn;
+        private Button m_QuitBtn;
+        private Button m_MainMenuBtn;
+        private Text m_FinalScoreText;
+        //-----------------------------------------------------------------------
+        //Countdown variables
+        private CanvasGroup m_CountDown;
+        private Transform[] m_Numbers = new Transform[3];
 
         //-----------------------------------------------------------------------
         //Initialise functions
@@ -27,6 +38,8 @@ namespace BBAR
         {
             InitialiseGUI();
             InitialiseMainMenu();
+            InitialiseEndMenu();
+            InitialiseCoundown();
         }
 
         private void InitialiseMainMenu()
@@ -35,7 +48,7 @@ namespace BBAR
             m_StartScreen = this.transform.Find("StartScreen").GetComponent<CanvasGroup>();
 
             m_PlayBtn = m_MainMenu.transform.Find("Buttons").transform.Find("PlayBtn").GetComponent<Button>();
-            m_PlayBtn.onClick.AddListener(() => PlayClicked());
+            m_PlayBtn.onClick.AddListener(() => PlayClicked(GameManager.Instance.ReadyToPlay));
             m_ExitBtn = m_MainMenu.transform.Find("Buttons").transform.Find("ExitBtn").GetComponent<Button>();
             m_ExitBtn.onClick.AddListener(() => GameManager.Instance.m_state = GameState.Exit);
         }
@@ -47,33 +60,57 @@ namespace BBAR
             m_ScoreLabel = this.transform.Find("GUI/ScoreLabel").GetComponent<TextMeshProUGUI>();
             m_TimeLabel = this.transform.Find("GUI/TimeLabel").GetComponent<TextMeshProUGUI>();
         }
+
+        private void InitialiseEndMenu()
+        {
+            m_EndMenu = this.transform.Find("EndMenu").GetComponent<CanvasGroup>();
+            m_FinalScoreText = m_EndMenu.transform.Find("FinalScore").GetComponent<Text>();
+
+            m_RestartBtn = m_EndMenu.transform.Find("Buttons/PlayBtn").GetComponent<Button>();
+            m_RestartBtn.onClick.AddListener(() => Restart(GameManager.Instance.ReadyToPlay));
+
+            m_QuitBtn = m_EndMenu.transform.Find("Buttons/ExitBtn").GetComponent<Button>();
+            m_QuitBtn.onClick.AddListener(() => GameManager.Instance.m_state = GameState.Exit);
+
+            m_MainMenuBtn = m_EndMenu.transform.Find("Buttons/MainMenuBtn").GetComponent<Button>();
+            m_MainMenuBtn.onClick.AddListener(() => GoBackToMainMenu());
+        }
+
+        private void InitialiseCoundown()
+        {
+            m_CountDown = this.transform.Find("CoundDown").GetComponent<CanvasGroup>();
+            Transform numbers = m_CountDown.transform;
+            int count = numbers.childCount;
+
+            for(int i = 0; i < count; ++i)
+            {
+                m_Numbers[i] = numbers.GetChild(i);
+                m_Numbers[i].gameObject.SetActive(false);
+            }
+
+            m_CountDown.alpha = 0;
+            m_CountDown.blocksRaycasts = false;
+            m_CountDown.interactable = false;
+        }
+
         //-----------------------------------------------------------------------
         //Show and Hide UI functions
         public IEnumerator ShowStartScreen()
         {
-            yield return new WaitForSeconds(3);       //Show the start screen for 3 seconds => Random value, to be changed
-            this.Create<ValueTween>(1.5f, EaseType.Linear, () =>
-            {
-                m_StartScreen.blocksRaycasts = false;
-                ShowMainMenu(true) ;                                       //Callback: enable the main menu view
-            }).Initialise(1f, 0f, (f) => 
-            {
-                m_StartScreen.alpha = f;               //Linear decrease the alpha 
-            });
+            m_StartScreen.alpha = 1;
+            m_StartScreen.blocksRaycasts = true;
+            yield return new WaitForSeconds(3.5f);       //Show the start screen for 3 seconds => Random value, to be changed
+            m_StartScreen.blocksRaycasts = false;
+            m_StartScreen.alpha = 0;
+            ShowMainMenu(true);
         }
 
         private void ShowMainMenu(bool state)
         {
-            float startVal = (state) ? 0f : 1f;
-            float endVal = (state) ? 1f : 0f;
-            this.Create<ValueTween>(1.5f, EaseType.Linear, () =>
-            {
-                m_MainMenu.blocksRaycasts = state;
-                m_MainMenu.interactable = state;
-            }).Initialise(startVal, endVal, (f) => 
-            {
-                m_MainMenu.alpha = f;
-            });
+
+            m_MainMenu.blocksRaycasts = state;
+            m_MainMenu.interactable = state;
+            m_MainMenu.alpha = (state) ? 1 : 0;
         }
 
         public void ShowGameGUI(bool state)
@@ -81,13 +118,44 @@ namespace BBAR
             m_GUI.alpha = (state) ? 1 : 0;
         }
 
-        public void ShowEndScreen(bool state)
+        public void ShowEndScreen(bool state, int score = 0)
         {
+            m_EndMenu.alpha = (state) ? 1f : 0f;
+            m_EndMenu.blocksRaycasts = state;
+            m_EndMenu.interactable = state;
+            if (state)
+            {
+                m_FinalScoreText.text = $"{score}";
+            }
         }
-
 
         public void ShowTutorialCanvas()
         {
+
+        }
+
+        public void ShowCountDown(int count)
+        {
+            m_CountDown.alpha = 1;
+            Transform num = m_Numbers[count];
+            num.gameObject.SetActive(true);
+            this.Create<ValueTween>(1f, EaseType.Linear, () =>
+            {
+                num.localScale = Vector3.one;
+                num.gameObject.SetActive(false);
+                if (count != 0)
+                {
+                    ShowCountDown(--count);
+                }
+                else
+                {
+                    GameManager.Instance.m_state = GameState.Play;
+                }
+            }).Initialise(1, 0, (f) =>
+            {
+                m_CountDown.alpha = f;
+                num.localScale = Vector3.one * f;
+            });
         }
         //-----------------------------------------------------------------------
         //Update UI functions
@@ -108,11 +176,24 @@ namespace BBAR
         
         //-----------------------------------------------------------------------
         //UI Interactions
-        private void PlayClicked()
+        private void PlayClicked(Action callback)
         {
             ShowMainMenu(false);
             ShowGameGUI(true);
+            callback?.Invoke();
         }
 
+        private void GoBackToMainMenu()
+        {
+            ShowEndScreen(false);
+            ShowMainMenu(true);
+        }
+
+        private void Restart(Action callback)
+        {
+            GameManager.Instance.ResetVariables();
+            ShowEndScreen(false);
+            callback?.Invoke();
+        }
     }
 }
