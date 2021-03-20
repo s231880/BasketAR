@@ -38,13 +38,14 @@ namespace BBAR
 
         private void Update()
         {
-            UpdatePlacementPose();
+            //if(GameManager.Instance.m_state == GameState.SetUp || GameManager.Instance.m_state == GameState.Play)
+                UpdatePlacementPose();
         }
 
         private void UpdatePlacementPose()
         {
 #if !UNITY_EDITOR
-            if(m_ThereIsAnActivePlane && GameManager.Instance.m_state != GameState.Ended)
+            if(m_ThereIsAnActivePlane)
             {
                if (Input.touchCount > 0)
                {
@@ -59,20 +60,17 @@ namespace BBAR
                }
             }
 #else
-            if (GameManager.Instance.m_state != GameState.Ended)
+            if (true == Input.GetMouseButtonDown(0))
             {
-                if (true == Input.GetMouseButtonDown(0))
-                {
-                    OnTouchBegan(Input.mousePosition);
-                }
-                else if (true == Input.GetMouseButton(0))
-                {
-                    OnTouchMoved(Input.mousePosition);
-                }
-                else if (true == Input.GetMouseButtonUp(0))
-                {
-                    OnTouchEnded(Input.mousePosition);
-                }
+                OnTouchBegan(Input.mousePosition);
+            }
+            else if (true == Input.GetMouseButton(0))
+            {
+                OnTouchMoved(Input.mousePosition);
+            }
+            else if (true == Input.GetMouseButtonUp(0))
+            {
+                OnTouchEnded(Input.mousePosition);
             }
 #endif
         }
@@ -82,7 +80,7 @@ namespace BBAR
             GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
 
-            if (GameManager.Instance.m_state == GameState.Started)              //If the basket hasn't been placed yet
+            if (GameManager.Instance.m_state == GameState.SetUp)              //If the basket hasn't been placed yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -90,7 +88,7 @@ namespace BBAR
                 }
             }
             //Else throw the ball or do all the rest
-            else if (GameManager.Instance.m_state == GameState.Playing)
+            else if (GameManager.Instance.m_state == GameState.Play)
             {
                 if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
@@ -104,7 +102,7 @@ namespace BBAR
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch In Progress");
             m_TouchPosition = touchPosition;
-            if (GameManager.Instance.m_state == GameState.Started)                      //Placing the basket
+            if (GameManager.Instance.m_state == GameState.SetUp)                      //Placing the basket
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -126,7 +124,7 @@ namespace BBAR
         private void OnTouchEnded(Vector3 touchPosition)
         {
             m_TouchPosition = touchPosition;
-            if (GameManager.Instance.m_state == GameState.Started)                //Placing the basket, the game is not started yet
+            if (GameManager.Instance.m_state == GameState.SetUp)                //Placing the basket, the game is not started yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -138,7 +136,7 @@ namespace BBAR
                     Destroy(m_BasketCursor);
                 }
             }
-            else if (GameManager.Instance.m_state == GameState.Playing)                                                           //Throwing the ball
+            else if (GameManager.Instance.m_state == GameState.Play)                                                           //Throwing the ball
             {
                 if (m_StartingPosition.y < m_TouchPosition.y)
                 {

@@ -16,9 +16,11 @@ namespace BBAR
     /// </summary>
     public enum GameState
     {
-        Started, // => Prepare to the game, activate
-        Playing,
-        Ended,
+        Start, // => Prepare to the game, activate
+        SetUp,
+        Ready,
+        Play,
+        End,
         Exit
     }
 
@@ -32,14 +34,14 @@ namespace BBAR
         private InputManager m_InputManager;
         private BasketManager m_BasketManager;
 
-        private bool m_BasketBeenPlaced = false;
+        private bool m_BasketBeenPlaced = false; 
         private ObjectPool m_BallsPool = new ObjectPool();
         public GameObject m_ActiveBall;
 
         private GameObject dialog = null;
         private static int m_Score = 0;
         private static int m_Timer;
-        private const int FULL_TIMER = 10; //60
+        private const int FULL_TIMER = 5; //60
 
         private Dictionary<string, ParticleSystem> m_ConfettiDictionary = new Dictionary<string, ParticleSystem>();
         //-----------------------------------------------------------------------
@@ -48,7 +50,6 @@ namespace BBAR
         private ARPlaneManager m_PlaneManager;
 
         private GameState m_State;
-
         public GameState m_state
         {
             get { return m_State; }
@@ -87,7 +88,7 @@ namespace BBAR
             GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
             CreateObjPool(ball);                                        // Create the pool
             InitialiseConfetti();
-            m_state = GameState.Started;                                // Start the game
+            m_state = GameState.Start;                                // Start the game
         }
 
         private void ARVariablesInitialisation()
@@ -108,7 +109,7 @@ namespace BBAR
         {
             m_BasketManager.PlaceTheBasket(position, rotation);
             m_BasketBeenPlaced = true;
-            m_state = GameState.Playing;
+            m_state = GameState.Ready;
         }
 
         private void InitialiseConfetti()
@@ -124,27 +125,58 @@ namespace BBAR
         {
             switch (m_State)
             {
-                case GameState.Started:                     // The UI menu should is showned
-                    StartCoroutine(m_UIManager.ShowStartScreen());
+                case GameState.Start:                     // The UI menu should is showned
+                    StartGame();
                     break;
-
-                case GameState.Playing:                     //The basket has been placed, the game can start
-                    ResetScoreAndTimer();                   //Set timer and score
-                    StartCoroutine(Startimer());            //Starts the timer
-                    ActivateBall();                         //Activate the first ball
-                    m_BasketManager.EnableScoreArea(true);  //Enable the score area
+                case GameState.SetUp:
+                    SetUpMatch();
                     break;
-
-                case GameState.Ended:   // The game is ended, the user has to decide between play again and go fuck himself
-                    PlayConfetti();
-                    m_BasketManager.EnableScoreArea(false);
-                    m_UIManager.ShowEndScreen(true);
+                case GameState.Ready:
+                    m_UIManager.ShowCountDown(2);
                     break;
-
+                case GameState.Play:                     //The basket has been placed, the game can start
+                    PlayMatch();
+                    break;
+                case GameState.End:                     // The game is ended, the user has to decide between play again and go fuck himself
+                    StartCoroutine(EndMatch());
+                    break;
                 case GameState.Exit:
                     CloseApplication();
                     break;
             }
+        }
+        
+        //-----------------------------------------------------------------------
+        //Handle Game parts
+
+        private void StartGame()
+        {
+            StartCoroutine(m_UIManager.ShowStartScreen());
+        }
+
+        private void SetUpMatch()
+        {
+            //Show tutorial UI
+        }
+
+        private void PlayMatch()
+        {
+            ResetScoreAndTimer();                   //Set timer and score
+            StartCoroutine(Startimer());            //Starts the timer
+            ActivateBall();                         //Activate the first ball
+            m_BasketManager.EnableScoreArea(true);  //Enable the score area
+        }
+
+        private IEnumerator EndMatch()
+        {
+            m_BasketManager.EnableScoreArea(false);
+            PlayConfetti(true);
+            yield return new WaitForSeconds(3);
+            m_UIManager.ShowEndScreen(true, m_Score);
+        }
+        private void CloseApplication()
+        {
+            Application.Quit();
         }
 
         //-----------------------------------------------------------------------
@@ -232,7 +264,7 @@ namespace BBAR
                 yield return new WaitForSeconds(1);
             }
 
-            m_state = GameState.Ended;
+            m_state = GameState.End;
         }
 
         private void ResetScoreAndTimer()
@@ -248,23 +280,41 @@ namespace BBAR
 
         public void ReadyToPlay()
         {
-            if (!m_BasketBeenPlaced)
+            switch  (m_BasketBeenPlaced)
             {
-
+                case false:
+                    m_state = GameState.SetUp;
+                    break;
+                case true:
+                    m_state = GameState.Ready;
+                    break;
             }
-            m_state = GameState.Playing;
         }
 
-        private void CloseApplication()
+        public void ResetVariables() 
         {
-            Application.Quit();
+            PlayConfetti(false);
+            if (m_ActiveBall != null)
+                m_BallsPool.ReturnObject(m_ActiveBall);
         }
 
         //-----------------------------------------------------------------------
-        private void PlayConfetti()
+        private void PlayConfetti(bool state)
         {
-            foreach (string key in m_ConfettiDictionary.Keys)
-                m_ConfettiDictionary[key].Play();
+            if (state)
+            {
+                foreach (string key in m_ConfettiDictionary.Keys)
+                  m_ConfettiDictionary[key].Play();
+            }
+            else
+            {
+                foreach (string key in m_ConfettiDictionary.Keys)
+                {
+                    m_ConfettiDictionary[key].Stop();
+                    Debug.LogError("cuai");
+                }
+            }
+
         }
     }
 }
