@@ -1,10 +1,7 @@
-using System.Collections;
-using System.Collections.Generic;
 using UnityEngine;
 
 namespace BBAR
 {
-
     public class Ball : MonoBehaviour
     {
         private Rigidbody m_RigidBody;
