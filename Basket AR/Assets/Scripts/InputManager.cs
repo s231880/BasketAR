@@ -41,9 +41,9 @@ namespace BBAR
 
         private void UpdatePlacementPose()
         {
-
+            GameManager.Instance.m_UIManager.SetLabelTest("pp update");
 #if !UNITY_EDITOR
-            if(m_ThereIsAnActivePlane)
+            if (m_ThereIsAnActivePlane)
             {
                if (Input.touchCount > 0)
                {
