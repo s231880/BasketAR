@@ -41,7 +41,7 @@ namespace BBAR
         private GameObject dialog = null;
         private static int m_Score = 0;
         private static int m_Timer;
-        private const int FULL_TIMER = 5; //60
+        private const int FULL_TIMER = 10; //60
 
         private Dictionary<string, ParticleSystem> m_ConfettiDictionary = new Dictionary<string, ParticleSystem>();
         //-----------------------------------------------------------------------
@@ -195,12 +195,15 @@ namespace BBAR
 
         //-----------------------------------------------------------------------
         //Throw the ball
-        public void ThrowActiveBall(Vector2 startingPos, Vector2 finalPos)
+        public void ThrowActiveBall(Vector2 startingPos, Vector2 finalPos, float timeStart, float timeEnd)
         {
             float differenceY = (startingPos.y - finalPos.y) / Screen.height * 100;
+            float timeDiff = timeEnd - timeStart;
 
-            float throwSpeed = 3f; //Random value
+            
+            float throwSpeed = 2f; //Random value
             // I think we should use as speed the difference between when the user has pressed the screen and when has release it
+            //float speed = Mathf.Clamp((throwSpeed * differenceY), 3f, 50f);
             float speed = throwSpeed * differenceY;
 
             float x = (startingPos.x / Screen.width) - (finalPos.x / Screen.width);
@@ -211,7 +214,7 @@ namespace BBAR
             direction = Camera.main.transform.TransformDirection(direction);
             //Vector3 direction = finalPos - startingPos;
 
-            m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed);
+            m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed, timeDiff);
         }
 
         //-----------------------------------------------------------------------
