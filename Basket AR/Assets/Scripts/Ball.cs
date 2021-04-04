@@ -11,6 +11,7 @@ namespace BBAR
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Fire = gameObject.GetComponentInChildren<ParticleSystem>();
+            //EnableFire(true);
         }
 
         public void ApplyForce(Vector3 direction, float speed, float timeDiff = 1f)
