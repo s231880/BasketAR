@@ -85,7 +85,7 @@ namespace BBAR
             ARVariablesInitialisation();
             //-----------------------------------------------------------------------
             //Obj Pool creation
-            GameObject ball = Resources.Load<GameObject>("FlameBall");  // Loading the ball prefab
+            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
             CreateObjPool(ball);                                        // Create the pool
             InitialiseConfetti();
             m_state = GameState.Start;                                // Start the game

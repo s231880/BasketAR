@@ -9,7 +9,9 @@ namespace BBAR
 
         private void OnTriggerEnter(Collider other)
         {
-            if (other.gameObject.name == "Ball")
+            //Debug.Log("Collision Entered with: " + other.gameObject.name);
+
+            if (other.gameObject.name == "Ball" || other.gameObject.name == "FlameBall")
             {
                 m_StartCollionPosition = other.gameObject.transform.position;
             }
@@ -17,7 +19,7 @@ namespace BBAR
 
         private void OnTriggerExit(Collider other)
         {
-            if (other.gameObject.name == "Ball")
+            if (other.gameObject.name == "Ball" || other.gameObject.name == "FlameBall")
             {
                 m_FinalCollisionPosition = other.gameObject.transform.position;
                 CheckIfTheUserScoredAPoint();
