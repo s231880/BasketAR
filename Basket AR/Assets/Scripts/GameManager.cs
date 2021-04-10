@@ -33,6 +33,7 @@ namespace BBAR
         public UIManager m_UIManager;
         private InputManager m_InputManager;
         private BasketManager m_BasketManager;
+        private AudioManager m_AudioManager;
 
         private bool m_BasketBeenPlaced = false; 
         private ObjectPool m_BallsPool = new ObjectPool();
@@ -82,13 +83,16 @@ namespace BBAR
             m_BasketManager = gameObject.AddComponent<BasketManager>();
             m_BasketManager.Initialise();
 
+            m_AudioManager = gameObject.transform.Find("AR Session Origin/AR Camera").gameObject.AddComponent<AudioManager>();
+            m_AudioManager.Initialise();
+
             ARVariablesInitialisation();
             //-----------------------------------------------------------------------
             //Obj Pool creation
-            GameObject ball = Resources.Load<GameObject>("Ball");  // Loading the ball prefab
+            GameObject ball = Resources.Load<GameObject>("Ball");       // Loading the ball prefab
             CreateObjPool(ball);                                        // Create the pool
             InitialiseConfetti();
-            m_state = GameState.Start;                                // Start the game
+            m_state = GameState.Start;                                  // Start the game
         }
 
         private void ARVariablesInitialisation()
@@ -132,7 +136,8 @@ namespace BBAR
                     SetUpMatch();
                     break;
                 case GameState.Ready:
-                    m_UIManager.ShowCountDown(2);
+                    m_UIManager.ShowCountDown();
+                    m_AudioManager.PlayCountdown();
                     break;
                 case GameState.Play:                     //The basket has been placed, the game can start
                     PlayMatch();
@@ -162,6 +167,7 @@ namespace BBAR
         private void PlayMatch()
         {
             ResetScoreAndTimer();                   //Set timer and score
+            m_AudioManager.PlayCheering();
             StartCoroutine(Startimer());            //Starts the timer
             ActivateBall();                         //Activate the first ball
             m_BasketManager.EnableScoreArea(true);  //Enable the score area
@@ -171,6 +177,7 @@ namespace BBAR
         {
             m_BasketManager.EnableScoreArea(false);
             PlayConfetti(true);
+            PlayEndGameSounds();
             yield return new WaitForSeconds(3);
             m_UIManager.ShowEndScreen(true, m_Score);
         }
@@ -229,6 +236,8 @@ namespace BBAR
             }
         }
 
+
+        //CAN THIS FUNCTION BE MOVED BRAD?
         private void OnGUI()
         {
 #if PLATFORM_ANDROID
@@ -306,6 +315,7 @@ namespace BBAR
         {
             if (state)
             {
+                m_AudioManager.PlayConfettiPop();
                 foreach (string key in m_ConfettiDictionary.Keys)
                   m_ConfettiDictionary[key].Play();
             }
@@ -314,10 +324,17 @@ namespace BBAR
                 foreach (string key in m_ConfettiDictionary.Keys)
                 {
                     m_ConfettiDictionary[key].Stop();
-                    Debug.LogError("cuai");
                 }
             }
 
+        }
+
+        public void PlayEndGameSounds()
+        {
+            if(m_Score < 5)
+                m_AudioManager.PlayBooing();
+            else
+                m_AudioManager.PlayCheering();
         }
     }
 }

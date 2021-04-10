@@ -134,7 +134,7 @@ namespace BBAR
 
         }
 
-        public void ShowCountDown(int count)
+        public void ShowCountDown(int count = 2)
         {
             m_CountDown.alpha = 1;
             Transform num = m_Numbers[count];
