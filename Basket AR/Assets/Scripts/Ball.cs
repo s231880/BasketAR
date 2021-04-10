@@ -11,12 +11,14 @@ namespace BBAR
         {
             m_RigidBody = GetComponent<Rigidbody>();
             m_Fire = gameObject.GetComponentInChildren<ParticleSystem>();
+            //EnableFire(true);
         }
 
-        public void ApplyForce(Vector3 direction, float speed)
+        public void ApplyForce(Vector3 direction, float speed, float timeDiff = 1f)
         {
             m_RigidBody.useGravity = true;
-            m_RigidBody.AddForce((direction * speed / 2f) + (Vector3.up * speed * -1));
+            m_RigidBody.AddForce((direction * speed / 2f) + ((Vector3.up * speed * -1) / timeDiff ));
+            //m_RigidBody.AddForce((direction.x * speed / 2f), (direction.y * speed/2f), (1 * speed * -1) / timeDiff );
 
             Invoke("ResetBall", 3.0f);
         }

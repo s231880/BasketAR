@@ -18,6 +18,7 @@ namespace BBAR
             m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab, position, m_BasketPrefab.transform.rotation);       //Instantiate the basket
             m_ActiveBasket.transform.LookAt(Camera.main.transform);
             m_ActiveBasket.transform.SetParent(this.transform);
+            m_ActiveBasket.transform.Rotate(0f, -90f, 0f);
             m_ScoreArea = m_ActiveBasket.GetComponentInChildren<BoxCollider>();
         }
 

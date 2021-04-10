@@ -18,6 +18,8 @@ namespace BBAR
         //AR variables
         private Pose m_PlacementPose;
 
+        private float m_TimeTouchStart = 0;
+        private float m_TimeTouchEnd = 0;
         private Vector2 m_TouchPosition = default;
         private ARRaycastManager m_RayCastManager;
         private Camera m_ARCamera;
@@ -79,6 +81,7 @@ namespace BBAR
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
+            m_TimeTouchStart = Time.time;
 
             if (GameManager.Instance.m_state == GameState.SetUp)              //If the basket hasn't been placed yet
             {
@@ -102,6 +105,7 @@ namespace BBAR
         {
             GameManager.Instance.m_UIManager.SetLabelTest("Touch In Progress");
             m_TouchPosition = touchPosition;
+           
             if (GameManager.Instance.m_state == GameState.SetUp)                      //Placing the basket
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
@@ -123,7 +127,10 @@ namespace BBAR
 
         private void OnTouchEnded(Vector3 touchPosition)
         {
+            
             m_TouchPosition = touchPosition;
+            m_TimeTouchEnd = Time.time;
+
             if (GameManager.Instance.m_state == GameState.SetUp)                //Placing the basket, the game is not started yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
@@ -141,7 +148,7 @@ namespace BBAR
                 if (m_StartingPosition.y < m_TouchPosition.y)
                 {
                     m_FinalPosition = m_TouchPosition;
-                    GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition);  //Throw the ball
+                    GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition, m_TimeTouchStart, m_TimeTouchEnd);  //Throw the ball
                     GameManager.Instance.ActivateBall();                                        //Active a new ball
                 }
                 else
@@ -149,6 +156,7 @@ namespace BBAR
                     ResetVariables();
                 }
                 m_HoldingTouch = false;
+                
             }
         }
 
