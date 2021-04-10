@@ -155,7 +155,7 @@ namespace BBAR
                 {
                     ResetVariables();
                 }
-                m_HoldingTouch = false;
+                //m_HoldingTouch = false;
                 
             }
         }
