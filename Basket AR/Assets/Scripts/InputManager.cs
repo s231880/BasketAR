@@ -12,7 +12,7 @@ namespace BBAR
         private Vector2 m_StartingPosition, m_FinalPosition;
         public bool m_ThereIsAnActivePlane = false;
         private bool m_HoldingTouch = false;
-        [SerializeField] private static int LAYER_BALL;
+        private static int LAYER_BALL;
 
         //-----------------------------------------------------------------------
         //AR variables
@@ -40,26 +40,23 @@ namespace BBAR
 
         private void Update()
         {
-            //if(GameManager.Instance.m_state == GameState.SetUp || GameManager.Instance.m_state == GameState.Play)
+            if(GameManager.Instance.m_state == GameState.SetUp || GameManager.Instance.m_state == GameState.Play)
                 UpdatePlacementPose();
         }
 
         private void UpdatePlacementPose()
         {
 #if !UNITY_EDITOR
-            if(m_ThereIsAnActivePlane)
+            if (Input.touchCount > 0)
             {
-               if (Input.touchCount > 0)
-               {
-                Touch touch = Input.GetTouch(0);
+            Touch touch = Input.GetTouch(0);
 
-                if (touch.phase == TouchPhase.Began)
-                    OnTouchBegan(touch.position);
-                else if (touch.phase == TouchPhase.Moved)
-                    OnTouchMoved(touch.position);
-                else if (touch.phase == TouchPhase.Ended)
-                    OnTouchEnded(touch.position);
-               }
+            if (touch.phase == TouchPhase.Began)
+                OnTouchBegan(touch.position);
+            else if (touch.phase == TouchPhase.Moved)
+                OnTouchMoved(touch.position);
+            else if (touch.phase == TouchPhase.Ended)
+                OnTouchEnded(touch.position);
             }
 #else
             if (true == Input.GetMouseButtonDown(0))
@@ -79,7 +76,6 @@ namespace BBAR
 
         private void OnTouchBegan(Vector3 touchPosition)
         {
-            GameManager.Instance.m_UIManager.SetLabelTest("Touch Began");
             m_TouchPosition = touchPosition;
             m_TimeTouchStart = Time.time;
 
@@ -96,14 +92,13 @@ namespace BBAR
                 if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
                     m_StartingPosition = m_TouchPosition;
-                    m_HoldingTouch = true;
+                    //m_HoldingTouch = true;
                 }
             }
         }
 
         private void OnTouchMoved(Vector3 touchPosition)
         {
-            GameManager.Instance.m_UIManager.SetLabelTest("Touch In Progress");
             m_TouchPosition = touchPosition;
            
             if (GameManager.Instance.m_state == GameState.SetUp)                      //Placing the basket
@@ -114,15 +109,7 @@ namespace BBAR
                 }
             }
             //Throwing the ball
-            else
-            {
-                //m_LastMouseX = touchPosition.x;
-                //m_LastMouseY = touchPosition.y;
-
-                //Not sure why you want this man, the ball should move only when the the user release the touch
-
-                //GameManager.Instance.m_ActiveBall.transform.localPosition = Vector3.Lerp(GameManager.Instance.m_ActiveBall.transform.localPosition, newPosition, 50f * Time.deltaTime);
-            }
+            else {}
         }
 
         private void OnTouchEnded(Vector3 touchPosition)
