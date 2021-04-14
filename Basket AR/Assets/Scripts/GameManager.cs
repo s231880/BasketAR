@@ -47,7 +47,6 @@ namespace BBAR
         private Dictionary<string, ParticleSystem> m_ConfettiDictionary = new Dictionary<string, ParticleSystem>();
         //-----------------------------------------------------------------------
         //AR variables
-
         private ARPlaneManager m_PlaneManager;
 
         private GameState m_State;
@@ -99,7 +98,7 @@ namespace BBAR
         {
             m_PlaneManager = gameObject.transform.Find("AR Session Origin").GetComponent<ARPlaneManager>();
             m_PlaneManager.planesChanged += PlaneStateChanged;      //Adding event when plan is detected
-            m_UIManager.SetLabelTest("AR Initted");
+            EnablePlaneManager(false);
         }
 
         private void CreateObjPool(GameObject ball)
@@ -161,6 +160,7 @@ namespace BBAR
 
         private void SetUpMatch()
         {
+            EnablePlaneManager(true);
             //Show tutorial UI
         }
 
@@ -233,10 +233,16 @@ namespace BBAR
             if (arg.added != null)
             {
                 m_InputManager.m_ThereIsAnActivePlane = true;
+
             }
         }
 
+        private void EnablePlaneManager(bool state)
+        {
+            m_PlaneManager.enabled = state;
+        }
 
+        //-----------------------------------------------------------------------
         //CAN THIS FUNCTION BE MOVED BRAD?
         private void OnGUI()
         {
