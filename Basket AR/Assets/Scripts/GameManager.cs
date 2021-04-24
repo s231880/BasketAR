@@ -161,7 +161,7 @@ namespace BBAR
         private void SetUpMatch()
         {
             EnablePlaneManager(true);
-            //Show tutorial UI
+            m_UIManager.EnableTutorialCanvas(true);
         }
 
         private void PlayMatch()
@@ -229,12 +229,19 @@ namespace BBAR
         //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
-            //Enabeling input when a plane has been detected
-            if (arg.added != null)
+            if(m_PlaneManager.trackables.count >= 3)
             {
-                m_InputManager.m_ThereIsAnActivePlane = true;
-
+                m_UIManager.ShowTutorial("Second");
             }
+
+            //if (arg.added != null)
+            //{
+            //    foreach(var plane in m_PlaneManager.trackables)
+            //    {
+            //        if (plane.transform.position.y != 0)
+            //            Destroy(plane);
+            //    }
+            //}
         }
 
         private void EnablePlaneManager(bool state)
@@ -279,9 +286,10 @@ namespace BBAR
             {
                 --m_Timer;
                 m_UIManager.SetTimer(m_Timer);
+                if (m_Timer == 0)
+                    m_AudioManager.PlayHorn();
                 yield return new WaitForSeconds(1);
             }
-
             m_state = GameState.End;
         }
 

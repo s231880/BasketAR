@@ -10,8 +10,6 @@ namespace BBAR
     public class InputManager : MonoBehaviour
     {
         private Vector2 m_StartingPosition, m_FinalPosition;
-        public bool m_ThereIsAnActivePlane = false;
-        private bool m_HoldingTouch = false;
         private static int LAYER_BALL;
 
         //-----------------------------------------------------------------------
@@ -84,6 +82,7 @@ namespace BBAR
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
                     m_BasketCursor = Instantiate(m_BasketPositionCursorPrefab, m_PlacementPose.position, m_PlacementPose.rotation);
+                    GameManager.Instance.m_UIManager.EnableTutorialCanvas(false);
                 }
             }
             //Else throw the ball or do all the rest

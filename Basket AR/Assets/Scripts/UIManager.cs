@@ -31,6 +31,11 @@ namespace BBAR
         //Countdown variables
         private CanvasGroup m_CountDown;
         private Transform[] m_Numbers = new Transform[3];
+        //-----------------------------------------------------------------------
+        //Tutorial variables
+        private CanvasGroup m_TutorialCanvasGroup;
+        private CanvasGroup m_ScanTutorial;
+        private CanvasGroup m_TapTutorial;
 
         //-----------------------------------------------------------------------
         //Initialise functions
@@ -40,6 +45,7 @@ namespace BBAR
             InitialiseMainMenu();
             InitialiseEndMenu();
             InitialiseCoundown();
+            InitialiseTutorials();
         }
 
         private void InitialiseMainMenu()
@@ -93,6 +99,13 @@ namespace BBAR
             m_CountDown.interactable = false;
         }
 
+        private void InitialiseTutorials()
+        {
+            m_TutorialCanvasGroup = this.transform.Find("Tutorial").GetComponent<CanvasGroup>();
+            m_ScanTutorial = this.transform.Find("Tutorial/ScanTutorial").GetComponent<CanvasGroup>();
+            m_TapTutorial = this.transform.Find("Tutorial/TapTutorial").GetComponent<CanvasGroup>();
+        }
+
         //-----------------------------------------------------------------------
         //Show and Hide UI functions
         public IEnumerator ShowStartScreen()
@@ -129,9 +142,26 @@ namespace BBAR
             }
         }
 
-        public void ShowTutorialCanvas()
+        public void EnableTutorialCanvas(bool state)
         {
+            m_TutorialCanvasGroup.alpha = state ? 1 : 0;
+            if (state)
+                ShowTutorial("First");
+        }
 
+        public void ShowTutorial(string tutorial)
+        {
+            switch(tutorial)
+            {
+                case "First":
+                    m_ScanTutorial.alpha = 1;
+                    m_TapTutorial.alpha = 0;
+                    break;
+                case "Second":
+                    m_ScanTutorial.alpha = 0;
+                    m_TapTutorial.alpha = 1;
+                    break;
+            }
         }
 
         public void ShowCountDown(int count = 2)
