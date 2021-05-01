@@ -132,7 +132,7 @@ namespace BBAR
                     StartGame();
                     break;
                 case GameState.SetUp:
-                    SetUpMatch();
+                    StartCoroutine(SetUpMatch());
                     break;
                 case GameState.Ready:
                     m_UIManager.ShowCountDown();
@@ -158,10 +158,15 @@ namespace BBAR
             StartCoroutine(m_UIManager.ShowStartScreen());
         }
 
-        private void SetUpMatch()
+        private IEnumerator SetUpMatch()
         {
-            EnablePlaneManager(true);
+#if !UNITY_EDITOR
             m_UIManager.EnableTutorialCanvas(true);
+            yield return new WaitForSeconds(1.5f);
+#else
+            yield return new WaitForSeconds(0);
+#endif
+            EnablePlaneManager(true);
         }
 
         private void PlayMatch()
@@ -193,7 +198,7 @@ namespace BBAR
         {
             if(m_PlaneManager.trackables.count >= 3)
             {
-                m_UIManager.ShowTutorial("Second");
+                m_UIManager.ShowTutorial("HoopPlacement");
             }
 
             //if (arg.added != null)

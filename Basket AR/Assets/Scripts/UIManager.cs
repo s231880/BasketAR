@@ -146,18 +146,18 @@ namespace BBAR
         {
             m_TutorialCanvasGroup.alpha = state ? 1 : 0;
             if (state)
-                ShowTutorial("First");
+                ShowTutorial("AreaScan");
         }
 
         public void ShowTutorial(string tutorial)
         {
             switch(tutorial)
             {
-                case "First":
+                case "AreaScan":
                     m_ScanTutorial.alpha = 1;
                     m_TapTutorial.alpha = 0;
                     break;
-                case "Second":
+                case "HoopPlacement":
                     m_ScanTutorial.alpha = 0;
                     m_TapTutorial.alpha = 1;
                     break;
