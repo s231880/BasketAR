@@ -8,9 +8,10 @@ namespace BBAR
     public class AudioManager : MonoBehaviour
     {
         [SerializeField]private AudioSource[] m_Sources;
-        private const int SOURCES_COUNT = 2;
+        private const int SOURCES_COUNT = 3;
 
         private AudioClip m_CountDown;
+        private AudioClip m_Horn;
         private AudioClip m_Confetti;
         private AudioClip m_Cheering;
         private AudioClip[] m_Booing;
@@ -22,6 +23,7 @@ namespace BBAR
             m_Sources = gameObject.GetComponents<AudioSource>();
 
             //Audio clip initialisation
+            m_Horn = Resources.Load<AudioClip>("Sounds/Horn");
             m_CountDown = Resources.Load<AudioClip>("Sounds/Countodown");
             m_Confetti = Resources.Load<AudioClip>("Sounds/Confetti");
             m_Cheering = Resources.Load<AudioClip>("Sounds/Cheering");
@@ -35,9 +37,9 @@ namespace BBAR
 
         public void PlayCountdown()
         {
-            m_Sources[1].clip = m_CountDown;
-            m_Sources[1].pitch = 0.7f;
-            m_Sources[1].Play();
+            m_Sources[2].clip = m_CountDown;
+            m_Sources[2].pitch = 0.7f;
+            m_Sources[2].Play();
         }
 
         public void PlayCheering()
@@ -58,6 +60,12 @@ namespace BBAR
             int sound = Random.Range(0, 2);
             m_Sources[0].clip = m_Booing[sound];
             m_Sources[0].Play();
+        }
+
+        public void PlayHorn()
+        {
+            m_Sources[2].clip = m_Horn;
+            m_Sources[2].Play();
         }
     }
 }
