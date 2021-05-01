@@ -16,7 +16,7 @@ namespace BBAR
     /// </summary>
     public enum GameState
     {
-        Start, // => Prepare to the game, activate
+        Start,
         SetUp,
         Ready,
         Play,
@@ -101,13 +101,6 @@ namespace BBAR
             EnablePlaneManager(false);
         }
 
-        //private void CreateObjPool(GameObject ball)
-        //{
-        //    GameObject ballsPool = new GameObject("BallsPool");         // Pool transform creation
-        //    ballsPool.transform.SetParent(this.transform);              // Setting this gameobject as parent of the pool
-        //    m_BallsPool.CreatePool(ball, ballsPool.transform);          // Initialise the pool
-        //}
-
         public void PlaceTheBasket(Vector3 position, Quaternion rotation)
         {
             m_BasketManager.PlaceTheBasket(position, rotation);
@@ -174,7 +167,7 @@ namespace BBAR
             ResetScoreAndTimer();                   //Set timer and score
             m_AudioManager.PlayCheering();
             StartCoroutine(Startimer());            //Starts the timer
-            m_BallManager.ActivateBall();                         //Activate the first ball
+            m_BallManager.ActivateBall();           //Activate the first ball
             m_BasketManager.EnableScoreArea(true);  //Enable the score area
         }
 
