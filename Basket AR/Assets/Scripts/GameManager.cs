@@ -37,8 +37,6 @@ namespace BBAR
         private BallManager m_BallManager;
 
         private bool m_BasketBeenPlaced = false; 
-        //private ObjectPool m_BallsPool = new ObjectPool();
-        //public GameObject m_ActiveBall;
 
         private GameObject dialog = null;
         private static int m_Score = 0;
@@ -90,7 +88,7 @@ namespace BBAR
             m_BallManager.Initialise();
 
             ARVariablesInitialisation();
-            InitialiseConfetti();
+            //InitialiseConfetti();
             m_state = GameState.Start;                                  // Start the game
         }
 
