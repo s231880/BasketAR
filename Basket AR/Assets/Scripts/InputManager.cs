@@ -134,8 +134,7 @@ namespace BBAR
                 if (m_StartingPosition.y < m_TouchPosition.y)
                 {
                     m_FinalPosition = m_TouchPosition;
-                    GameManager.Instance.ThrowActiveBall(m_StartingPosition, m_FinalPosition, m_TimeTouchStart, m_TimeTouchEnd);  //Throw the ball
-                    GameManager.Instance.ActivateBall();                                        //Active a new ball
+                    GameManager.Instance.NotifyInput(m_StartingPosition, m_FinalPosition, m_TimeTouchStart, m_TimeTouchEnd);  //Throw the ball
                 }
                 else
                 {
