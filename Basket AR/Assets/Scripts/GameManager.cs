@@ -88,7 +88,7 @@ namespace BBAR
             m_BallManager.Initialise();
 
             ARVariablesInitialisation();
-            //InitialiseConfetti();
+            InitialiseConfetti();
             m_state = GameState.Start;                                  // Start the game
         }
 

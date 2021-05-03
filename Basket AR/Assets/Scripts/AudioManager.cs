@@ -66,9 +66,9 @@ namespace BBAR
 
         public void PlayHorn()
         {
-            m_Sources[2].clip = m_Horn;
-            m_Sources[2].pitch = 1f;
-            m_Sources[2].Play();
+            m_Sources[0].clip = m_Horn;
+            //m_Sources[0].pitch = 1f;
+            m_Sources[0].Play();
         }
 
         public void PlayWhoosh()
