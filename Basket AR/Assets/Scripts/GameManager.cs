@@ -39,9 +39,11 @@ namespace BBAR
         private bool m_BasketBeenPlaced = false; 
 
         private GameObject dialog = null;
-        private static int m_Score = 0;
+        public int m_Score = 0;
+        public int m_MaxScore = 0;
         private static int m_Timer;
         private const int FULL_TIMER = 10; //60
+        private float m_PlaneHeigtht = 100;
 
         private Dictionary<string, ParticleSystem> m_ConfettiDictionary = new Dictionary<string, ParticleSystem>();
         //-----------------------------------------------------------------------
@@ -88,7 +90,7 @@ namespace BBAR
             m_BallManager.Initialise();
 
             ARVariablesInitialisation();
-            //InitialiseConfetti();
+            InitialiseConfetti();
             m_state = GameState.Start;                                  // Start the game
         }
 
@@ -153,7 +155,7 @@ namespace BBAR
         {
 #if !UNITY_EDITOR
             m_UIManager.EnableTutorialCanvas(true);
-            yield return new WaitForSeconds(1.5f);
+            yield return new WaitForSeconds(1f);
 #else
             yield return new WaitForSeconds(0);
 #endif
@@ -174,8 +176,10 @@ namespace BBAR
             m_BasketManager.EnableScoreArea(false);
             PlayConfetti(true);
             PlayEndGameSounds();
+            if (m_Score > m_MaxScore)
+                m_MaxScore = m_Score;
             yield return new WaitForSeconds(3);
-            m_UIManager.ShowEndScreen(true, m_Score);
+            m_UIManager.ShowEndScreen(true);
         }
         private void CloseApplication()
         {
@@ -189,17 +193,9 @@ namespace BBAR
         {
             if(m_PlaneManager.trackables.count >= 3)
             {
-                m_UIManager.ShowTutorial("HoopPlacement");
+                  m_UIManager.ShowTutorial("HoopPlacement");
             }
-
-            //if (arg.added != null)
-            //{
-            //    foreach(var plane in m_PlaneManager.trackables)
-            //    {
-            //        if (plane.transform.position.y != 0)
-            //            Destroy(plane);
-            //    }
-            //}
+           
         }
 
         private void EnablePlaneManager(bool state)
@@ -236,6 +232,7 @@ namespace BBAR
         public void NotifyInput(Vector2 startingPos, Vector2 finalPos, float timeStart, float timeEnd)
         {
             m_BallManager.ThrowActiveBall(startingPos, finalPos, timeStart, timeEnd);
+            m_AudioManager.PlayWhoosh();
             m_BallManager.ActivateBall();
         }
 

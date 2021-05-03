@@ -27,6 +27,7 @@ namespace BBAR
         private Button m_QuitBtn;
         private Button m_MainMenuBtn;
         private Text m_FinalScoreText;
+        private Text m_MaxScoreText;
         //-----------------------------------------------------------------------
         //Countdown variables
         private CanvasGroup m_CountDown;
@@ -71,6 +72,7 @@ namespace BBAR
         {
             m_EndMenu = this.transform.Find("EndMenu").GetComponent<CanvasGroup>();
             m_FinalScoreText = m_EndMenu.transform.Find("FinalScore").GetComponent<Text>();
+            m_MaxScoreText = m_EndMenu.transform.Find("MaxScore").GetComponent<Text>();
 
             m_RestartBtn = m_EndMenu.transform.Find("Buttons/PlayBtn").GetComponent<Button>();
             m_RestartBtn.onClick.AddListener(() => Restart(GameManager.Instance.ReadyToPlay));
@@ -130,14 +132,15 @@ namespace BBAR
             m_GUI.alpha = (state) ? 1 : 0;
         }
 
-        public void ShowEndScreen(bool state, int score = 0)
+        public void ShowEndScreen(bool state)
         {
             m_EndMenu.alpha = (state) ? 1f : 0f;
             m_EndMenu.blocksRaycasts = state;
             m_EndMenu.interactable = state;
             if (state)
             {
-                m_FinalScoreText.text = $"{score}";
+                m_FinalScoreText.text = $"{GameManager.Instance.m_Score}";
+                m_MaxScoreText.text = $"YOUR MAX SCORE IS: {GameManager.Instance.m_MaxScore}";
             }
         }
 
