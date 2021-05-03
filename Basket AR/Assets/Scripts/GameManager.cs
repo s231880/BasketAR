@@ -128,6 +128,7 @@ namespace BBAR
                     StartCoroutine(SetUpMatch());
                     break;
                 case GameState.Ready:
+                    EnablePlaneManager(false);
                     m_UIManager.ShowCountDown();
                     m_AudioManager.PlayCountdown();
                     break;
@@ -200,6 +201,15 @@ namespace BBAR
 
         private void EnablePlaneManager(bool state)
         {
+            if (!state)
+            {
+                if (m_PlaneManager.trackables.count != 0)
+                {
+                    foreach (var plane in m_PlaneManager.trackables)
+                        plane.gameObject.SetActive(false);
+                            //plane.gameObject.GetComponent<MeshRenderer>().forceRenderingOff = true;
+                }
+            }
             m_PlaneManager.enabled = state;
         }
 
