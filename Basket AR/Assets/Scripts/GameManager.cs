@@ -16,7 +16,7 @@ namespace BBAR
     /// </summary>
     public enum GameState
     {
-        Start, // => Prepare to the game, activate
+        Start,
         SetUp,
         Ready,
         Play,
@@ -34,10 +34,9 @@ namespace BBAR
         private InputManager m_InputManager;
         private BasketManager m_BasketManager;
         private AudioManager m_AudioManager;
+        private BallManager m_BallManager;
 
         private bool m_BasketBeenPlaced = false; 
-        private ObjectPool m_BallsPool = new ObjectPool();
-        public GameObject m_ActiveBall;
 
         private GameObject dialog = null;
         private static int m_Score = 0;
@@ -85,12 +84,11 @@ namespace BBAR
             m_AudioManager = gameObject.transform.Find("AR Session Origin/AR Camera").gameObject.AddComponent<AudioManager>();
             m_AudioManager.Initialise();
 
+            m_BallManager = gameObject.AddComponent<BallManager>();
+            m_BallManager.Initialise();
+
             ARVariablesInitialisation();
-            //-----------------------------------------------------------------------
-            //Obj Pool creation
-            GameObject ball = Resources.Load<GameObject>("Ball");       // Loading the ball prefab
-            CreateObjPool(ball);                                        // Create the pool
-            InitialiseConfetti();
+            //InitialiseConfetti();
             m_state = GameState.Start;                                  // Start the game
         }
 
@@ -99,13 +97,6 @@ namespace BBAR
             m_PlaneManager = gameObject.transform.Find("AR Session Origin").GetComponent<ARPlaneManager>();
             m_PlaneManager.planesChanged += PlaneStateChanged;      //Adding event when plan is detected
             EnablePlaneManager(false);
-        }
-
-        private void CreateObjPool(GameObject ball)
-        {
-            GameObject ballsPool = new GameObject("BallsPool");         // Pool transform creation
-            ballsPool.transform.SetParent(this.transform);              // Setting this gameobject as parent of the pool
-            m_BallsPool.CreatePool(ball, ballsPool.transform);          // Initialise the pool
         }
 
         public void PlaceTheBasket(Vector3 position, Quaternion rotation)
@@ -132,7 +123,7 @@ namespace BBAR
                     StartGame();
                     break;
                 case GameState.SetUp:
-                    SetUpMatch();
+                    StartCoroutine(SetUpMatch());
                     break;
                 case GameState.Ready:
                     m_UIManager.ShowCountDown();
@@ -158,10 +149,15 @@ namespace BBAR
             StartCoroutine(m_UIManager.ShowStartScreen());
         }
 
-        private void SetUpMatch()
+        private IEnumerator SetUpMatch()
         {
-            EnablePlaneManager(true);
+#if !UNITY_EDITOR
             m_UIManager.EnableTutorialCanvas(true);
+            yield return new WaitForSeconds(1.5f);
+#else
+            yield return new WaitForSeconds(0);
+#endif
+            EnablePlaneManager(true);
         }
 
         private void PlayMatch()
@@ -169,7 +165,7 @@ namespace BBAR
             ResetScoreAndTimer();                   //Set timer and score
             m_AudioManager.PlayCheering();
             StartCoroutine(Startimer());            //Starts the timer
-            ActivateBall();                         //Activate the first ball
+            m_BallManager.ActivateBall();           //Activate the first ball
             m_BasketManager.EnableScoreArea(true);  //Enable the score area
         }
 
@@ -187,51 +183,13 @@ namespace BBAR
         }
 
         //-----------------------------------------------------------------------
-        //Getting and returning ball to the pool => Probably these functions should be moved into Ball.cs, what do you think Brad?
-        public void ActivateBall()
-        {
-            m_ActiveBall = m_BallsPool.GetObject();
-            m_ActiveBall.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * 2.5f);
-            m_ActiveBall.transform.position -= (m_ActiveBall.transform.up * 0.5f);
-        }
-
-        public void ReturnBallTothePool(GameObject thrownBall)
-        {
-            m_BallsPool.ReturnObject(thrownBall);
-        }
-
-        //-----------------------------------------------------------------------
-        //Throw the ball
-        public void ThrowActiveBall(Vector2 startingPos, Vector2 finalPos, float timeStart, float timeEnd)
-        {
-            float differenceY = (startingPos.y - finalPos.y) / Screen.height * 100;
-            float timeDiff = timeEnd - timeStart;
-
-            
-            float throwSpeed = 2f; //Random value
-            // I think we should use as speed the difference between when the user has pressed the screen and when has release it
-            //float speed = Mathf.Clamp((throwSpeed * differenceY), 3f, 50f);
-            float speed = throwSpeed * differenceY;
-
-            float x = (startingPos.x / Screen.width) - (finalPos.x / Screen.width);
-
-            x = Mathf.Abs(Input.mousePosition.x - finalPos.x) / Screen.width * 100 * x;
-
-            Vector3 direction = new Vector3(x, 0f, -1f);
-            direction = Camera.main.transform.TransformDirection(direction);
-            //Vector3 direction = finalPos - startingPos;
-
-            m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed, timeDiff);
-        }
-
-        //-----------------------------------------------------------------------
         //Function that detects when plane state change => the state can be: Added, Updated, Removed
         //Right now the placing of the basket does not work properly so I'll keep it, in future coudl be removed if we don't find a purpose
         private void PlaneStateChanged(ARPlanesChangedEventArgs arg)
         {
             if(m_PlaneManager.trackables.count >= 3)
             {
-                m_UIManager.ShowTutorial("Second");
+                m_UIManager.ShowTutorial("HoopPlacement");
             }
 
             //if (arg.added != null)
@@ -274,6 +232,13 @@ namespace BBAR
 
         //-----------------------------------------------------------------------
         //Score and timer functions
+
+        public void NotifyInput(Vector2 startingPos, Vector2 finalPos, float timeStart, float timeEnd)
+        {
+            m_BallManager.ThrowActiveBall(startingPos, finalPos, timeStart, timeEnd);
+            m_BallManager.ActivateBall();
+        }
+
         public void UpdateScored()
         {
             m_Score += 1;
@@ -317,11 +282,10 @@ namespace BBAR
             }
         }
 
-        public void ResetVariables() 
+        public void ResetVariables()
         {
             PlayConfetti(false);
-            if (m_ActiveBall != null)
-                m_BallsPool.ReturnObject(m_ActiveBall);
+            m_BallManager.ResetBall();
         }
 
         //-----------------------------------------------------------------------

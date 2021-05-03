@@ -30,7 +30,7 @@ namespace BBAR
         //-----------------------------------------------------------------------
         //Countdown variables
         private CanvasGroup m_CountDown;
-        private Transform[] m_Numbers = new Transform[3];
+        private Transform[] m_Numbers = new Transform[4];
         //-----------------------------------------------------------------------
         //Tutorial variables
         private CanvasGroup m_TutorialCanvasGroup;
@@ -120,7 +120,6 @@ namespace BBAR
 
         private void ShowMainMenu(bool state)
         {
-
             m_MainMenu.blocksRaycasts = state;
             m_MainMenu.interactable = state;
             m_MainMenu.alpha = (state) ? 1 : 0;
@@ -146,25 +145,25 @@ namespace BBAR
         {
             m_TutorialCanvasGroup.alpha = state ? 1 : 0;
             if (state)
-                ShowTutorial("First");
+                ShowTutorial("AreaScan");
         }
 
         public void ShowTutorial(string tutorial)
         {
             switch(tutorial)
             {
-                case "First":
+                case "AreaScan":
                     m_ScanTutorial.alpha = 1;
                     m_TapTutorial.alpha = 0;
                     break;
-                case "Second":
+                case "HoopPlacement":
                     m_ScanTutorial.alpha = 0;
                     m_TapTutorial.alpha = 1;
                     break;
             }
         }
 
-        public void ShowCountDown(int count = 2)
+        public void ShowCountDown(int count = 3)
         {
             m_CountDown.alpha = 1;
             Transform num = m_Numbers[count];

@@ -30,7 +30,7 @@ namespace BBAR
             m_RigidBody.angularVelocity = Vector3.zero;
             gameObject.transform.rotation = Quaternion.Euler(0f, 200f, 0f);
             gameObject.transform.position = Vector3.zero;
-            GameManager.Instance.ReturnBallTothePool(gameObject);
+            BallManager.Instance.ReturnBallTothePool(gameObject);
         }
 
         public void EnableFire(bool state)
