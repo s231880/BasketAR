@@ -13,6 +13,7 @@ namespace BBAR
         private AudioClip m_CountDown;
         private AudioClip m_Horn;
         private AudioClip m_Confetti;
+        private AudioClip m_Whoosh;
         private AudioClip m_Cheering;
         private AudioClip[] m_Booing;
 
@@ -27,6 +28,7 @@ namespace BBAR
             m_CountDown = Resources.Load<AudioClip>("Sounds/Countodown");
             m_Confetti = Resources.Load<AudioClip>("Sounds/Confetti");
             m_Cheering = Resources.Load<AudioClip>("Sounds/Cheering");
+            m_Whoosh = Resources.Load<AudioClip>("Sounds/Whoosh");
             m_Booing = new AudioClip[2];
             for (int i = 1; i <= 2; ++i)
             {
@@ -65,6 +67,14 @@ namespace BBAR
         public void PlayHorn()
         {
             m_Sources[2].clip = m_Horn;
+            m_Sources[2].pitch = 1f;
+            m_Sources[2].Play();
+        }
+
+        public void PlayWhoosh()
+        {
+            m_Sources[2].clip = m_Whoosh;
+            m_Sources[2].pitch = 1f;
             m_Sources[2].Play();
         }
     }

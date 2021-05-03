@@ -236,6 +236,7 @@ namespace BBAR
         public void NotifyInput(Vector2 startingPos, Vector2 finalPos, float timeStart, float timeEnd)
         {
             m_BallManager.ThrowActiveBall(startingPos, finalPos, timeStart, timeEnd);
+            m_AudioManager.PlayWhoosh();
             m_BallManager.ActivateBall();
         }
 
