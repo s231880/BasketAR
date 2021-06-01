@@ -27,10 +27,16 @@ namespace BBAR
         private Button m_QuitBtn;
         private Button m_MainMenuBtn;
         private Text m_FinalScoreText;
+        private Text m_MaxScoreText;
         //-----------------------------------------------------------------------
         //Countdown variables
         private CanvasGroup m_CountDown;
-        private Transform[] m_Numbers = new Transform[3];
+        private Transform[] m_Numbers = new Transform[4];
+        //-----------------------------------------------------------------------
+        //Tutorial variables
+        private CanvasGroup m_TutorialCanvasGroup;
+        private CanvasGroup m_ScanTutorial;
+        private CanvasGroup m_TapTutorial;
 
         //-----------------------------------------------------------------------
         //Initialise functions
@@ -40,6 +46,7 @@ namespace BBAR
             InitialiseMainMenu();
             InitialiseEndMenu();
             InitialiseCoundown();
+            InitialiseTutorials();
         }
 
         private void InitialiseMainMenu()
@@ -65,6 +72,7 @@ namespace BBAR
         {
             m_EndMenu = this.transform.Find("EndMenu").GetComponent<CanvasGroup>();
             m_FinalScoreText = m_EndMenu.transform.Find("FinalScore").GetComponent<Text>();
+            m_MaxScoreText = m_EndMenu.transform.Find("MaxScore").GetComponent<Text>();
 
             m_RestartBtn = m_EndMenu.transform.Find("Buttons/PlayBtn").GetComponent<Button>();
             m_RestartBtn.onClick.AddListener(() => Restart(GameManager.Instance.ReadyToPlay));
@@ -93,6 +101,13 @@ namespace BBAR
             m_CountDown.interactable = false;
         }
 
+        private void InitialiseTutorials()
+        {
+            m_TutorialCanvasGroup = this.transform.Find("Tutorial").GetComponent<CanvasGroup>();
+            m_ScanTutorial = this.transform.Find("Tutorial/ScanTutorial").GetComponent<CanvasGroup>();
+            m_TapTutorial = this.transform.Find("Tutorial/TapTutorial").GetComponent<CanvasGroup>();
+        }
+
         //-----------------------------------------------------------------------
         //Show and Hide UI functions
         public IEnumerator ShowStartScreen()
@@ -107,7 +122,6 @@ namespace BBAR
 
         private void ShowMainMenu(bool state)
         {
-
             m_MainMenu.blocksRaycasts = state;
             m_MainMenu.interactable = state;
             m_MainMenu.alpha = (state) ? 1 : 0;
@@ -118,23 +132,41 @@ namespace BBAR
             m_GUI.alpha = (state) ? 1 : 0;
         }
 
-        public void ShowEndScreen(bool state, int score = 0)
+        public void ShowEndScreen(bool state)
         {
             m_EndMenu.alpha = (state) ? 1f : 0f;
             m_EndMenu.blocksRaycasts = state;
             m_EndMenu.interactable = state;
             if (state)
             {
-                m_FinalScoreText.text = $"{score}";
+                m_FinalScoreText.text = $"{GameManager.Instance.m_Score}";
+                m_MaxScoreText.text = $"YOUR MAX SCORE IS: {GameManager.Instance.m_MaxScore}";
             }
         }
 
-        public void ShowTutorialCanvas()
+        public void EnableTutorialCanvas(bool state)
         {
-
+            m_TutorialCanvasGroup.alpha = state ? 1 : 0;
+            if (state)
+                ShowTutorial("AreaScan");
         }
 
-        public void ShowCountDown(int count)
+        public void ShowTutorial(string tutorial)
+        {
+            switch(tutorial)
+            {
+                case "AreaScan":
+                    m_ScanTutorial.alpha = 1;
+                    m_TapTutorial.alpha = 0;
+                    break;
+                case "HoopPlacement":
+                    m_ScanTutorial.alpha = 0;
+                    m_TapTutorial.alpha = 1;
+                    break;
+            }
+        }
+
+        public void ShowCountDown(int count = 3)
         {
             m_CountDown.alpha = 1;
             Transform num = m_Numbers[count];
