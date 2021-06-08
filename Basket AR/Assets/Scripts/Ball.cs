@@ -20,7 +20,7 @@ namespace BBAR
             m_RigidBody.AddForce((direction * speed / 2f) + ((Vector3.up * speed * -1) / timeDiff ));
             //m_RigidBody.AddForce((direction.x * speed / 2f), (direction.y * speed/2f), (1 * speed * -1) / timeDiff );
 
-            Invoke("ResetBall", 3.0f);
+            Invoke("ResetBall", 5.0f);
         }
 
         public void ResetBall()
