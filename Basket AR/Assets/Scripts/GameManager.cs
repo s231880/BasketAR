@@ -42,7 +42,7 @@ namespace BBAR
         public int m_Score = 0;
         public int m_MaxScore = 0;
         private static int m_Timer;
-        private const int FULL_TIMER = 10; //60
+        private const int FULL_TIMER = 20; //60
         private float m_PlaneHeigtht = 100;
 
         private Dictionary<string, ParticleSystem> m_ConfettiDictionary = new Dictionary<string, ParticleSystem>();
@@ -51,15 +51,8 @@ namespace BBAR
         private ARPlaneManager m_PlaneManager;
 
         private GameState m_State;
-        public GameState m_state
-        {
-            get { return m_State; }
-            set
-            {
-                m_State = value;
-                NotifyManagers();
-            }
-        }
+        public GameState State => m_State;
+
 
         private void Awake()
         {
@@ -91,7 +84,7 @@ namespace BBAR
 
             ARVariablesInitialisation();
             InitialiseConfetti();
-            m_state = GameState.Start;                                  // Start the game
+            GameStateChange (GameState.Start);                                  // Start the game
         }
 
         private void ARVariablesInitialisation()
@@ -105,7 +98,7 @@ namespace BBAR
         {
             m_BasketManager.PlaceTheBasket(position, rotation);
             m_BasketBeenPlaced = true;
-            m_state = GameState.Ready;
+            GameStateChange (GameState.Ready);
         }
 
         private void InitialiseConfetti()
@@ -117,8 +110,9 @@ namespace BBAR
 
         //-----------------------------------------------------------------------
         //Change game state
-        private void NotifyManagers()
+        public void GameStateChange(GameState state)
         {
+            m_State = state;
             switch (m_State)
             {
                 case GameState.Start:                     // The UI menu should is showned
@@ -196,7 +190,6 @@ namespace BBAR
             {
                   m_UIManager.ShowTutorial("HoopPlacement");
             }
-           
         }
 
         private void EnablePlaneManager(bool state)
@@ -262,7 +255,7 @@ namespace BBAR
                     m_AudioManager.PlayHorn();
                 yield return new WaitForSeconds(1);
             }
-            m_state = GameState.End;
+            GameStateChange (GameState.End);
         }
 
         private void ResetScoreAndTimer()
@@ -281,10 +274,10 @@ namespace BBAR
             switch  (m_BasketBeenPlaced)
             {
                 case false:
-                    m_state = GameState.SetUp;
+                    GameStateChange (GameState.SetUp);
                     break;
                 case true:
-                    m_state = GameState.Ready;
+                    GameStateChange (GameState.Ready);
                     break;
             }
         }

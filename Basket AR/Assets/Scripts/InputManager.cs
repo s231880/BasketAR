@@ -38,7 +38,7 @@ namespace BBAR
 
         private void Update()
         {
-            if(GameManager.Instance.m_state == GameState.SetUp || GameManager.Instance.m_state == GameState.Play)
+            if(GameManager.Instance.State == GameState.SetUp || GameManager.Instance.State == GameState.Play)
                 UpdatePlacementPose();
         }
 
@@ -77,7 +77,7 @@ namespace BBAR
             m_TouchPosition = touchPosition;
             m_TimeTouchStart = Time.time;
 
-            if (GameManager.Instance.m_state == GameState.SetUp)              //If the basket hasn't been placed yet
+            if (GameManager.Instance.State == GameState.SetUp)              //If the basket hasn't been placed yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -86,7 +86,7 @@ namespace BBAR
                 }
             }
             //Else throw the ball or do all the rest
-            else if (GameManager.Instance.m_state == GameState.Play)
+            else if (GameManager.Instance.State == GameState.Play)
             {
                 if (ActiveBallHasBeenTouched(m_TouchPosition))
                 {
@@ -100,7 +100,7 @@ namespace BBAR
         {
             m_TouchPosition = touchPosition;
            
-            if (GameManager.Instance.m_state == GameState.SetUp)                      //Placing the basket
+            if (GameManager.Instance.State == GameState.SetUp)                      //Placing the basket
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -117,7 +117,7 @@ namespace BBAR
             m_TouchPosition = touchPosition;
             m_TimeTouchEnd = Time.time;
 
-            if (GameManager.Instance.m_state == GameState.SetUp)                //Placing the basket, the game is not started yet
+            if (GameManager.Instance.State == GameState.SetUp)                //Placing the basket, the game is not started yet
             {
                 if (AValidPlaneHasBeenTouched(m_TouchPosition))
                 {
@@ -129,7 +129,7 @@ namespace BBAR
                     Destroy(m_BasketCursor);
                 }
             }
-            else if (GameManager.Instance.m_state == GameState.Play)                                                           //Throwing the ball
+            else if (GameManager.Instance.State == GameState.Play)                                                           //Throwing the ball
             {
                 if (m_StartingPosition.y < m_TouchPosition.y)
                 {
