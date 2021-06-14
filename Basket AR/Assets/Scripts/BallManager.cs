@@ -27,7 +27,7 @@ namespace BBAR
         //Getting and returning ball to the pool => Probably these functions should be moved into Ball.cs, what do you think Brad?
         public void ActivateBall()
         {
-            Invoke("ActivateBallImplementation", 0.05f);
+            Invoke("ActivateBallImplementation", 0.2f);
         }
 
         //Adding an Invokable form of ActivateBall to avoid the floating spawning ball issue
@@ -65,6 +65,7 @@ namespace BBAR
             //Vector3 direction = finalPos - startingPos;
 
             m_ActiveBall.GetComponent<Ball>().ApplyForce(direction, speed, timeDiff);
+            //m_ActiveBall.GetComponent<Ball>().transform.Rotate(direction);
         }
         public void ResetBall()
         {
