@@ -34,8 +34,8 @@ namespace BBAR
         private void ActivateBallImplementation()
         {
             m_ActiveBall = m_BallsPool.GetObject();
-            m_ActiveBall.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * 2.5f);
-            m_ActiveBall.transform.position -= (m_ActiveBall.transform.up * 0.5f);
+            //m_ActiveBall.transform.position = Camera.main.transform.position + (Camera.main.transform.forward * 2.5f);
+            //m_ActiveBall.transform.position -= (m_ActiveBall.transform.up * 0.5f);
         }
 
         public void ReturnBallTothePool(GameObject thrownBall)

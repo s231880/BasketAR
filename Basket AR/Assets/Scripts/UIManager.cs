@@ -57,7 +57,7 @@ namespace BBAR
             m_PlayBtn = m_MainMenu.transform.Find("Buttons").transform.Find("PlayBtn").GetComponent<Button>();
             m_PlayBtn.onClick.AddListener(() => PlayClicked(GameManager.Instance.ReadyToPlay));
             m_ExitBtn = m_MainMenu.transform.Find("Buttons").transform.Find("ExitBtn").GetComponent<Button>();
-            m_ExitBtn.onClick.AddListener(() => GameManager.Instance.m_state = GameState.Exit);
+            m_ExitBtn.onClick.AddListener(() => GameManager.Instance.GameStateChange(GameState.Exit));
         }
 
         private void InitialiseGUI()
@@ -78,7 +78,7 @@ namespace BBAR
             m_RestartBtn.onClick.AddListener(() => Restart(GameManager.Instance.ReadyToPlay));
 
             m_QuitBtn = m_EndMenu.transform.Find("Buttons/ExitBtn").GetComponent<Button>();
-            m_QuitBtn.onClick.AddListener(() => GameManager.Instance.m_state = GameState.Exit);
+            m_QuitBtn.onClick.AddListener(() => GameManager.Instance.GameStateChange(GameState.Exit));
 
             m_MainMenuBtn = m_EndMenu.transform.Find("Buttons/MainMenuBtn").GetComponent<Button>();
             m_MainMenuBtn.onClick.AddListener(() => GoBackToMainMenu());
@@ -181,7 +181,7 @@ namespace BBAR
                 }
                 else
                 {
-                    GameManager.Instance.m_state = GameState.Play;
+                    GameManager.Instance.GameStateChange(GameState.Play);
                 }
             }).Initialise(1, 0, (f) =>
             {
