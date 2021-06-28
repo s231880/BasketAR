@@ -51,7 +51,7 @@ namespace BBAR
             float timeDiff = timeEnd - timeStart;
 
 
-            float throwSpeed = 2f; //Random value
+            float throwSpeed = 1.2f; //Random value
             // I think we should use as speed the difference between when the user has pressed the screen and when has release it
             //float speed = Mathf.Clamp((throwSpeed * differenceY), 3f, 50f);
             float speed = throwSpeed * differenceY;
