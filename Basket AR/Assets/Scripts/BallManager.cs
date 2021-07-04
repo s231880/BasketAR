@@ -60,7 +60,7 @@ namespace BBAR
 
             x = Mathf.Abs(Input.mousePosition.x - finalPos.x) / Screen.width * 100 * x;
 
-            Vector3 direction = new Vector3(x, 0f, -1f);
+            Vector3 direction = new Vector3(x, 0f, -2f);
             direction = Camera.main.transform.TransformDirection(direction);
             //Vector3 direction = finalPos - startingPos;
 

@@ -15,6 +15,8 @@ namespace BBAR
 
         public void PlaceTheBasket(Vector3 position, Quaternion rotation)
         {
+            //Vector3 posPlaced = new Vector3(position.x, position.y - 3f, position.z);
+
             m_ActiveBasket = GameObject.Instantiate(m_BasketPrefab, position, m_BasketPrefab.transform.rotation);       //Instantiate the basket
             m_ActiveBasket.transform.LookAt(Camera.main.transform);
             m_ActiveBasket.transform.SetParent(this.transform);
