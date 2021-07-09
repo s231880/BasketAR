@@ -18,9 +18,12 @@ namespace BBAR
         {
             m_RigidBody.useGravity = true;
             m_RigidBody.AddForce((direction * speed / 2f) + ((Vector3.up * speed * -1) / timeDiff ));
+            Vector3 impulse = (speed * Mathf.Deg2Rad) * m_RigidBody.inertiaTensor;
+
+            m_RigidBody.AddTorque(impulse, ForceMode.Impulse);
             //m_RigidBody.AddForce((direction.x * speed / 2f), (direction.y * speed/2f), (1 * speed * -1) / timeDiff );
 
-            Invoke("ResetBall", 5.0f);
+            Invoke("ResetBall", 7.0f);
         }
 
         public void ResetBall()
